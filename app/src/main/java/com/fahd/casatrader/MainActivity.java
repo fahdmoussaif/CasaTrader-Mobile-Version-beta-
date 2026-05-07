@@ -1,5 +1,6 @@
 package com.fahd.casatrader;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -18,33 +19,42 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        SupabaseApi api = ApiClient
-                .getInstance(TokenStore.getInstance(this))
-                .create(SupabaseApi.class);
 
-        api.pingStocks("ticker,name", 3).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
+        TokenStore ts = TokenStore.getInstance(this);
+        String userId = ts.getUserId();
+        String token = ts.getAccessToken();
+        android.util.Log.d("CasaTrader", "Logged in as " + userId
+                + ", token starts with " + (token == null ? "null" : token.substring(0, 12)));
+        SupabaseApi api = ApiClient.getInstance(ts).create(SupabaseApi.class);
+        api.getMyProfileSingle("application/vnd.pgrst.object+json", "eq." + ts.getUserId(),
+                "id,username,email,cash_balance").enqueue(new retrofit2.Callback<com.fahd.casatrader.data.model.Profile>() {
             @Override
-            public void onResponse(@NonNull retrofit2.Call<okhttp3.ResponseBody> call,
-                                   @NonNull retrofit2.Response<okhttp3.ResponseBody> response) {
-                try {
-                    String body = response.body() != null ? response.body().string() : "null";
-                    android.util.Log.d("CasaTrader", "Ping " + response.code() + " → " + body);
-                } catch (java.io.IOException e) {
-                    android.util.Log.e("CasaTrader", "Read error", e);
+            public void onResponse(@NonNull retrofit2.Call<com.fahd.casatrader.data.model.Profile> call,
+                                   @NonNull retrofit2.Response<com.fahd.casatrader.data.model.Profile> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    android.util.Log.d("CasaTrader", "Profile: " + response.body().username
+                            + " | balance: " + response.body().cashBalance);
+                } else {
+                    android.util.Log.e("CasaTrader", "Profile fetch failed: " + response.code());
                 }
             }
             @Override
-            public void onFailure(@NonNull retrofit2.Call<okhttp3.ResponseBody> call,
+            public void onFailure(@NonNull retrofit2.Call<com.fahd.casatrader.data.model.Profile> call,
                                   @NonNull Throwable t) {
-                android.util.Log.e("CasaTrader", "Ping failed", t);
+                android.util.Log.e("CasaTrader", "Profile fetch error", t);
             }
         });
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // In MainActivity.onCreate, attached to whatever placeholder view you have
+        findViewById(R.id.Logout).setOnLongClickListener(v -> {
+            TokenStore.getInstance(this).clear();
+            startActivity(new Intent(this, com.fahd.casatrader.ui.auth.LoginActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finish();
+            return true;
         });
+
+        // TODO step 5: replace with stock list
     }
 }
