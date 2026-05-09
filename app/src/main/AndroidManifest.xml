@@ -23,10 +23,10 @@
 
         <activity
             android:name=".ui.auth.SignupActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.stocks.StockListActivity"
             android:exported="false" />
     </application>
 

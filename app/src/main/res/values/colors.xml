@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gain_green">#1B873F</color>
+    <color name="loss_red">#D13438</color>
+    <color name="neutral_gray">#6B7280</color>
 </resources>
