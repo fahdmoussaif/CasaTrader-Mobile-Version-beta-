@@ -17,7 +17,7 @@ public class StockListViewModel extends ViewModel {
 
     public static class UiState {
         public final LoadState loadState;
-        public final List<Stock> stocks;       // filtered list (what the adapter shows)
+        public final List<Stock> stocks;       
         public final String errorMessage;
 
         private UiState(LoadState s, List<Stock> stocks, String e) {
@@ -32,7 +32,7 @@ public class StockListViewModel extends ViewModel {
     private final StockRepository repo;
     private final MutableLiveData<UiState> uiState = new MutableLiveData<>(UiState.idle());
 
-    private List<Stock> allStocks = new ArrayList<>();   // unfiltered, kept for client-side search
+    private List<Stock> allStocks = new ArrayList<>();   
     private String currentQuery = "";
 
     public StockListViewModel(StockRepository repo) { this.repo = repo; }
@@ -56,7 +56,7 @@ public class StockListViewModel extends ViewModel {
 
     public void setSearchQuery(String query) {
         currentQuery = query == null ? "" : query.trim();
-        // Re-filter from cached list — no network roundtrip per keystroke.
+        
         if (uiState.getValue() != null && uiState.getValue().loadState == LoadState.SUCCESS) {
             uiState.setValue(UiState.success(filter(allStocks, currentQuery)));
         }

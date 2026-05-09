@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fahd.casatrader.R;
 import com.fahd.casatrader.data.model.Holding;
 import com.fahd.casatrader.data.model.Profile;
 import com.fahd.casatrader.data.model.WriteDtos.TradeResult;
@@ -53,8 +52,8 @@ public class TradeDialog extends BottomSheetDialogFragment {
     private Mode mode;
     private String ticker;
     private double price;
-    private double availableCash = -1;       // for BUY
-    private int sharesOwned = -1;            // for SELL
+    private double availableCash = -1;
+    private int sharesOwned = -1;
 
     @Override
     public void onAttach(@NonNull android.content.Context context) {
@@ -84,17 +83,10 @@ public class TradeDialog extends BottomSheetDialogFragment {
         TokenStore ts = TokenStore.getInstance(requireContext());
         repo = new TradeRepository(ApiClient.getInstance(ts), ts);
 
-        // Header
-        binding.headerTv.setText(
-                (mode == Mode.BUY ? "Buy " : "Sell ") + ticker);
-        binding.subheaderTv.setText(
-                "Current price " + fmt(price) + " MAD");
-
-        binding.totalLabelTv.setText(
-                mode == Mode.BUY ? "Total cost" : "You receive");
-
-        binding.confirmBtn.setText(
-                mode == Mode.BUY ? "Confirm purchase" : "Confirm sale");
+        binding.headerTv.setText((mode == Mode.BUY ? "Buy " : "Sell ") + ticker);
+        binding.subheaderTv.setText("Current price " + fmt(price) + " MAD");
+        binding.totalLabelTv.setText(mode == Mode.BUY ? "Total cost" : "You receive");
+        binding.confirmBtn.setText(mode == Mode.BUY ? "Confirm purchase" : "Confirm sale");
 
         binding.sharesEt.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
@@ -106,10 +98,7 @@ public class TradeDialog extends BottomSheetDialogFragment {
 
         binding.confirmBtn.setOnClickListener(v -> submit());
 
-        // Initial preview (0 shares)
         updatePreview(0);
-
-        // Load context (cash balance for buy, holding for sell)
         loadContext();
     }
 
@@ -119,8 +108,7 @@ public class TradeDialog extends BottomSheetDialogFragment {
                 @Override public void onSuccess(Profile p) {
                     availableCash = p.cashBalance != null ? p.cashBalance : 0;
                     if (binding != null) {
-                        binding.availableTv.setText(
-                                "Available: " + fmt(availableCash) + " MAD");
+                        binding.availableTv.setText("Available: " + fmt(availableCash) + " MAD");
                         revalidate();
                     }
                 }
@@ -175,7 +163,7 @@ public class TradeDialog extends BottomSheetDialogFragment {
             } else {
                 canSubmit = true;
             }
-        } else { // SELL
+        } else {
             if (sharesOwned >= 0 && shares > sharesOwned) {
                 canSubmit = false;
                 error = "You only own " + sharesOwned + " shares.";

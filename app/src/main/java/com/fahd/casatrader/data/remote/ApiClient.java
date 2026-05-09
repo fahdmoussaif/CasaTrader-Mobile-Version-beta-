@@ -19,7 +19,7 @@ public class ApiClient {
 
     private final TokenStore tokenStore;
     private final Retrofit mainRetrofit;
-    private final AuthApi bareAuthApi;       // for refresh calls — no refresh interceptor, can't recurse
+    private final AuthApi bareAuthApi;
 
     private ApiClient(TokenStore tokenStore) {
         this.tokenStore = tokenStore;
@@ -29,7 +29,6 @@ public class ApiClient {
                 ? HttpLoggingInterceptor.Level.BODY
                 : HttpLoggingInterceptor.Level.NONE);
 
-        // 1. Bare client used only for refresh calls.
         OkHttpClient bareClient = new OkHttpClient.Builder()
                 .addInterceptor(new AuthInterceptor(tokenStore))
                 .addInterceptor(logging)
@@ -44,7 +43,6 @@ public class ApiClient {
                 .build();
         bareAuthApi = bareRetrofit.create(AuthApi.class);
 
-        // 2. Main client with the refresh-on-401 interceptor.
         OkHttpClient mainClient = new OkHttpClient.Builder()
                 .addInterceptor(new AuthInterceptor(tokenStore))
                 .addInterceptor(new TokenRefreshInterceptor(tokenStore, this::refreshSync))
@@ -73,10 +71,6 @@ public class ApiClient {
         return mainRetrofit.create(serviceClass);
     }
 
-    /**
-     * Synchronously refreshes the JWT. Returns true on success.
-     * Must be called from a background thread (it blocks).
-     */
     public boolean refreshSync() {
         String refreshToken = tokenStore.getRefreshToken();
         if (refreshToken == null) return false;

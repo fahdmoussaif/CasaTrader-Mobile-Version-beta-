@@ -7,6 +7,5 @@ public class WatchlistEntry {
     @SerializedName("ticker")   public String ticker;
     @SerializedName("added_at") public String addedAt;
 
-    // Useful when fetching watchlist with a join: ?select=ticker,added_at,stocks(*)
     @SerializedName("stocks")   public Stock stock;
 }

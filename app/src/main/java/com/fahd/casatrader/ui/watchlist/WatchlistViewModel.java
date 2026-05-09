@@ -41,7 +41,7 @@ public class WatchlistViewModel extends ViewModel {
         });
     }
 
-    /** Optimistic remove: drop locally first, refetch on error. */
+    
     public void remove(String ticker) {
         UiState current = uiState.getValue();
         if (current != null && current.loadState == LoadState.SUCCESS) {
@@ -52,8 +52,8 @@ public class WatchlistViewModel extends ViewModel {
             uiState.setValue(UiState.success(filtered));
         }
         repo.remove(ticker, new WatchlistRepository.Callback<Void>() {
-            @Override public void onSuccess(Void data) { /* already removed locally */ }
-            @Override public void onError(String m) { load(); /* roll back by refetching */ }
+            @Override public void onSuccess(Void data) {  }
+            @Override public void onError(String m) { load();  }
         });
     }
 }

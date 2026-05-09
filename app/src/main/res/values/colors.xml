@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="gain_green">#1B873F</color>
-    <color name="loss_red">#D13438</color>
-    <color name="neutral_gray">#6B7280</color>
+    <color name="md_theme_primary">#00658B</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#C5E7FF</color>
+    <color name="md_theme_onPrimaryContainer">#001E2D</color>
+    <color name="md_theme_secondary">#4F606E</color>
+    <color name="md_theme_surface">#F8F9FA</color>
+    <color name="md_theme_onSurface">#191C1E</color>
+    <color name="md_theme_surfaceContainerLowest">#FFFFFF</color>
+    <color name="md_theme_surfaceContainerLow">#F1F3F4</color>
+    <color name="md_theme_surfaceContainer">#E8EAED</color>
+    <color name="md_theme_surfaceContainerHigh">#DADCE0</color>
+    <color name="md_theme_outline">#70777C</color>
+    <color name="md_theme_outlineVariant">#C0C7CD</color>
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+
+    <color name="gain_green">#2E7D32</color>
+    <color name="loss_red">#C62828</color>
+    <color name="neutral_gray">#757575</color>
+
+    <color name="pill_gain_container">#E8F5E9</color>
+    <color name="pill_gain_text">#2E7D32</color>
+    <color name="pill_loss_container">#FFEBEE</color>
+    <color name="pill_loss_text">#C62828</color>
 </resources>

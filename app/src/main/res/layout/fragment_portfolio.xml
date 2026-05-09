@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurfaceContainerLowest">
+    android:background="?attr/colorSurface">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -23,15 +23,21 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp">
 
-                <!-- ============ SUMMARY CARD ============ -->
+                <TextView
+                    android:id="@+id/usernameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="4dp"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"/>
+
                 <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.App.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="?attr/colorOutlineVariant"
-                    app:cardCornerRadius="16dp">
+                    android:layout_marginTop="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -43,24 +49,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TOTAL VALUE"
-                            android:textSize="11sp"
-                            android:textAllCaps="true"
-                            android:letterSpacing="0.05"
-                            android:textColor="?android:textColorSecondary"/>
+                            style="@style/QuoteLabel"/>
 
                         <TextView
                             android:id="@+id/totalValueTv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceDisplaySmall"
+                            android:textAppearance="?attr/textAppearanceHeadlineSmall"
                             android:textStyle="bold"
-                            android:layout_marginTop="2dp"/>
+                            android:layout_marginTop="4dp"/>
 
                         <TextView
                             android:id="@+id/totalPlTv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:layout_marginTop="2dp"/>
 
                         <View
@@ -76,34 +79,33 @@
 
                             <LinearLayout style="@style/QuoteCell">
                                 <TextView style="@style/QuoteLabel" android:text="Cash"/>
-                                <TextView android:id="@+id/cashTv" style="@style/QuoteValue"/>
+                                <TextView android:id="@+id/cashTv" style="@style/QuoteValue" android:textAppearance="?attr/textAppearanceBodyLarge"/>
                             </LinearLayout>
 
                             <LinearLayout style="@style/QuoteCell">
                                 <TextView style="@style/QuoteLabel" android:text="Holdings"/>
-                                <TextView android:id="@+id/holdingsValueTv" style="@style/QuoteValue"/>
+                                <TextView android:id="@+id/holdingsValueTv" style="@style/QuoteValue" android:textAppearance="?attr/textAppearanceBodyLarge"/>
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- ============ HOLDINGS LIST ============ -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:layout_marginStart="4dp"
                     android:text="Holdings"
-                    android:textAppearance="?attr/textAppearanceTitleSmall"/>
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:letterSpacing="0.05"
+                    android:textAllCaps="true"/>
 
                 <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.App.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="?attr/colorOutlineVariant"
-                    app:cardCornerRadius="16dp">
+                    android:layout_marginTop="8dp">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -115,17 +117,43 @@
                             android:layout_height="wrap_content"
                             android:nestedScrollingEnabled="false"/>
 
-                        <TextView
-                            android:id="@+id/emptyTv"
+                        <LinearLayout
+                            android:id="@+id/emptyState"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="32dp"
-                            android:text="No holdings yet — explore stocks to start trading."
+                            android:orientation="vertical"
                             android:gravity="center"
-                            android:textColor="?android:textColorSecondary"
-                            android:visibility="gone"/>
+                            android:padding="32dp"
+                            android:visibility="gone">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/ic_portfolio"
+                                app:tint="?attr/colorOnSurfaceVariant"
+                                android:layout_marginBottom="8dp"
+                                android:contentDescription="Empty state icon"/>
+                            <TextView
+                                android:id="@+id/emptyTv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="No holdings yet — explore stocks to start trading."
+                                android:gravity="center"
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:textColor="?attr/colorOnSurfaceVariant"/>
+                        </LinearLayout>
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutBtn"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Log out"
+                    android:textColor="?attr/colorError"
+                    app:rippleColor="?attr/colorError"/>
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

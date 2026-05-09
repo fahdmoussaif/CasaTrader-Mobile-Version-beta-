@@ -10,10 +10,7 @@ public class HoldingWithStock {
     @SerializedName("avg_buy_price")  public Double avgBuyPrice;
     @SerializedName("updated_at")     public String updatedAt;
 
-    /** Embedded via PostgREST foreign-key resolution. */
     @SerializedName("stocks")         public Stock stock;
-
-    // ----- Computed (UI-only) -----
 
     public double currentValue() {
         if (stock == null || stock.price == null || shares == null) return 0;
@@ -25,7 +22,6 @@ public class HoldingWithStock {
         return avgBuyPrice * shares;
     }
 
-    /** Unrealized gross P/L (no sell-side fee yet, since we haven't sold). */
     public double unrealizedPl() {
         return currentValue() - costBasis();
     }

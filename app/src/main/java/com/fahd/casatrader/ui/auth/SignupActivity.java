@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.fahd.casatrader.MainActivity;
 import com.fahd.casatrader.databinding.ActivitySignupBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -42,10 +43,21 @@ public class SignupActivity extends AppCompatActivity {
                 home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(home);
                 finish();
+            } else if (state.state == AuthViewModel.State.SUCCESS_CONFIRMATION_REQUIRED) {
+                showConfirmationMessage();
             } else if (state.state == AuthViewModel.State.ERROR) {
                 Toast.makeText(this, state.errorMessage, Toast.LENGTH_LONG).show();
                 viewModel.resetState();
             }
         });
+    }
+
+    private void showConfirmationMessage() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Confirm your email")
+                .setMessage("We've sent a confirmation link to your email address. Please verify your account before logging in.")
+                .setPositiveButton("OK", (dialog, which) -> finish())
+                .setCancelable(false)
+                .show();
     }
 }

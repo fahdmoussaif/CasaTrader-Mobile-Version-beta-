@@ -1,87 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="?attr/colorSurface">
+
+    <View
+        android:id="@+id/dragHandle"
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:background="?attr/colorOutlineVariant"
+        android:layout_marginTop="-12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/headerTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textStyle="bold"
-        tools:text="Buy ATW"
-        xmlns:tools="http://schemas.android.com/tools"/>
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/dragHandle"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/subheaderTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textColor="?android:textColorSecondary"
-        android:layout_marginTop="4dp"
-        tools:text="Current price 540.50 MAD"/>
-
-    <TextView
-        android:id="@+id/availableTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?android:textColorSecondary"
-        tools:text="Available: 100,000.00 MAD"/>
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@id/headerTv"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sharesLayout"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="Number of shares"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
+        android:hint="Shares"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/subheaderTv">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/sharesEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:textAppearance="?attr/textAppearanceBodyLarge"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/availableTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/sharesLayout"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <LinearLayout
+        android:id="@+id/breakdownContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:layout_marginTop="16dp"
-        android:background="?attr/colorSurfaceContainerLow">
+        android:background="@drawable/bg_breakdown_container"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/availableTv">
 
         <LinearLayout style="@style/TradeBreakdownRow">
-            <TextView style="@style/TradeBreakdownLabel" android:text="Subtotal"/>
-            <TextView android:id="@+id/grossTv" style="@style/TradeBreakdownValue"
-                tools:text="0.00 MAD"/>
+            <TextView style="@style/TradeBreakdownLabel" android:text="Gross amount"/>
+            <TextView android:id="@+id/grossTv" style="@style/TradeBreakdownValue"/>
         </LinearLayout>
 
-        <LinearLayout style="@style/TradeBreakdownRow">
-            <TextView style="@style/TradeBreakdownLabel" android:text="Fee (1%)"/>
-            <TextView android:id="@+id/feeTv" style="@style/TradeBreakdownValue"
-                tools:text="0.00 MAD"/>
+        <LinearLayout style="@style/TradeBreakdownRow" android:layout_marginTop="8dp">
+            <TextView style="@style/TradeBreakdownLabel" android:text="Transaction fee (1%)"/>
+            <TextView android:id="@+id/feeTv" style="@style/TradeBreakdownValue"/>
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="?attr/colorOutlineVariant"/>
+            android:background="?attr/colorOutlineVariant"
+            android:layout_marginVertical="12dp"/>
 
         <LinearLayout style="@style/TradeBreakdownRow">
-            <TextView style="@style/TradeBreakdownLabel"
-                android:id="@+id/totalLabelTv"
-                tools:text="Total cost"/>
-            <TextView android:id="@+id/totalTv"
-                android:textStyle="bold"
-                style="@style/TradeBreakdownValue"
-                tools:text="0.00 MAD"/>
+            <TextView android:id="@+id/totalLabelTv" style="@style/TradeBreakdownLabel" android:textAppearance="?attr/textAppearanceTitleMedium" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+            <TextView android:id="@+id/totalTv" style="@style/TradeBreakdownValue" android:textAppearance="?attr/textAppearanceTitleMedium" android:textColor="?attr/colorPrimary"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -89,27 +99,30 @@
         android:id="@+id/dialogErrorTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textColor="@color/loss_red"
+        android:textColor="?attr/colorError"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:gravity="center"
         android:visibility="gone"
-        tools:visibility="visible"
-        tools:text="Not enough cash for this purchase."/>
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/breakdownContainer"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/confirmBtn"
+        style="@style/Widget.App.Button"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="20dp"
-        android:enabled="false"
-        app:cornerRadius="14dp"
-        tools:text="Confirm purchase"/>
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/dialogErrorTv"/>
 
     <ProgressBar
         android:id="@+id/dialogLoadingPb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/confirmBtn"
+        app:layout_constraintBottom_toBottomOf="@id/confirmBtn"
+        app:layout_constraintStart_toStartOf="@id/confirmBtn"
+        app:layout_constraintEnd_toEndOf="@id/confirmBtn"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,7 @@ public class Transaction {
     @SerializedName("id")         public Long id;
     @SerializedName("user_id")    public String userId;
     @SerializedName("ticker")     public String ticker;
-    @SerializedName("type")       public String type;        // "BUY" or "SELL"
+    @SerializedName("type")       public String type;
     @SerializedName("shares")     public Integer shares;
     @SerializedName("price")      public Double price;
     @SerializedName("total")      public Double total;

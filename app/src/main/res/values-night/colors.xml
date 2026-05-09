@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="md_theme_primary">#80CFFF</color>
+    <color name="md_theme_onPrimary">#00344B</color>
+    <color name="md_theme_primaryContainer">#004C6A</color>
+    <color name="md_theme_onPrimaryContainer">#C5E7FF</color>
+    <color name="md_theme_secondary">#B7C9D9</color>
+    <color name="md_theme_surface">#0F1115</color>
+    <color name="md_theme_onSurface">#E2E2E6</color>
+    <color name="md_theme_surfaceContainerLowest">#0F1115</color>
+    <color name="md_theme_surfaceContainerLow">#1A1C1E</color>
+    <color name="md_theme_surfaceContainer">#202226</color>
+    <color name="md_theme_surfaceContainerHigh">#2A2C30</color>
+    <color name="md_theme_outline">#8A9197</color>
+    <color name="md_theme_outlineVariant">#40484D</color>
+    <color name="md_theme_error">#FFB4AB</color>
+    <color name="md_theme_onError">#690005</color>
+
+    <color name="gain_green">#81C784</color>
+    <color name="loss_red">#E57373</color>
+    <color name="neutral_gray">#BDBDBD</color>
+
+    <color name="pill_gain_container">#1B5E20</color>
+    <color name="pill_gain_text">#C8E6C9</color>
+    <color name="pill_loss_container">#B71C1C</color>
+    <color name="pill_loss_text">#FFCDD2</color>
+</resources>

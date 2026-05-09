@@ -4,17 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class WriteDtos {
 
-    /** POST /rest/v1/transactions */
     public static class TransactionInsert {
         @SerializedName("user_id") public String userId;
         @SerializedName("ticker")  public String ticker;
-        @SerializedName("type")    public String type;     // "BUY" | "SELL"
+        @SerializedName("type")    public String type;
         @SerializedName("shares")  public Integer shares;
         @SerializedName("price")   public Double price;
         @SerializedName("total")   public Double total;
     }
 
-    /** POST /rest/v1/holdings (upsert) */
     public static class HoldingUpsert {
         @SerializedName("user_id")       public String userId;
         @SerializedName("ticker")        public String ticker;
@@ -22,19 +20,16 @@ public class WriteDtos {
         @SerializedName("avg_buy_price") public Double avgBuyPrice;
     }
 
-    /** PATCH /rest/v1/profiles?id=eq.<uid> — cash balance update after a trade */
     public static class CashBalanceUpdate {
         @SerializedName("cash_balance") public Double cashBalance;
         public CashBalanceUpdate(Double cashBalance) { this.cashBalance = cashBalance; }
     }
 
-    /** POST /rest/v1/watchlist */
     public static class WatchlistInsert {
         @SerializedName("user_id") public String userId;
         @SerializedName("ticker")  public String ticker;
     }
 
-    /** POST /rest/v1/rpc/buy_stock */
     public static class BuyRequest {
         @SerializedName("p_ticker") public String ticker;
         @SerializedName("p_shares") public Integer shares;
@@ -44,7 +39,6 @@ public class WriteDtos {
         }
     }
 
-    /** POST /rest/v1/rpc/sell_stock */
     public static class SellRequest {
         @SerializedName("p_ticker") public String ticker;
         @SerializedName("p_shares") public Integer shares;
@@ -54,7 +48,6 @@ public class WriteDtos {
         }
     }
 
-    /** Response from buy_stock and sell_stock RPCs. */
     public static class TradeResult {
         @SerializedName("transaction_id")     public Long transactionId;
         @SerializedName("ticker")             public String ticker;
@@ -63,12 +56,10 @@ public class WriteDtos {
         @SerializedName("price")              public Double price;
         @SerializedName("gross")              public Double gross;
         @SerializedName("fee")                public Double fee;
-        // Set on BUY only:
         @SerializedName("total_cost")         public Double totalCost;
         @SerializedName("new_cash_balance")   public Double newCashBalance;
         @SerializedName("new_holding_shares") public Integer newHoldingShares;
         @SerializedName("new_avg_buy_price")  public Double newAvgBuyPrice;
-        // Set on SELL only:
         @SerializedName("net_proceeds")       public Double netProceeds;
         @SerializedName("remaining_shares")   public Integer remainingShares;
         @SerializedName("realized_pl")        public Double realizedPl;

@@ -4,12 +4,12 @@ import androidx.annotation.NonNull;
 
 import com.fahd.casatrader.data.model.AuthDtos.AuthSession;
 import com.fahd.casatrader.data.model.AuthDtos.EmailPasswordRequest;
-import com.fahd.casatrader.data.model.AuthDtos.RefreshRequest;
 import com.fahd.casatrader.data.remote.ApiClient;
 import com.fahd.casatrader.data.remote.AuthApi;
 import com.fahd.casatrader.util.TokenStore;
 
-import java.io.IOException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +20,7 @@ import retrofit2.Response;
 public class AuthRepository {
 
     public interface AuthCallback {
-        void onSuccess();
+        void onSuccess(boolean sessionStarted);
         void onError(String message);
     }
 
@@ -74,28 +74,38 @@ public class AuthRepository {
             return;
         }
         AuthSession s = response.body();
+        
         if (s.accessToken == null) {
-            cb.onError("Email confirmation required. Disable it in Supabase dashboard for dev.");
+            cb.onSuccess(false);
             return;
         }
+        
         long expiresAt = s.expiresAt != null
                 ? s.expiresAt
                 : System.currentTimeMillis() / 1000L + (s.expiresIn != null ? s.expiresIn : 3600L);
         String userId = s.user != null ? s.user.id : null;
 
         tokenStore.saveSession(s.accessToken, s.refreshToken, expiresAt, userId);
-        cb.onSuccess();
+        cb.onSuccess(true);
     }
 
     private String parseError(Response<?> response) {
         try {
             if (response.errorBody() != null) {
                 String raw = response.errorBody().string();
-                // Supabase auth errors look like {"error":"invalid_grant","error_description":"..."}
-                // or {"msg":"...","code":...}. Cheap and cheerful: just show what we got.
-                return "Auth failed (" + response.code() + "): " + raw;
+                JSONObject json = new JSONObject(raw);
+                if (json.has("error_description")) {
+                    String desc = json.getString("error_description");
+                    if ("Invalid login credentials".equalsIgnoreCase(desc)) {
+                        return "Wrong email or password.";
+                    }
+                    return desc;
+                }
+                if (json.has("msg")) return json.getString("msg");
+                if (json.has("error")) return json.getString("error");
+                return raw;
             }
-        } catch (IOException ignored) {}
+        } catch (Exception ignored) {}
         return "Auth failed (" + response.code() + ")";
     }
 }

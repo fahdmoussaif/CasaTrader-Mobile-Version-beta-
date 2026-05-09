@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Header;
-
 
 public class StockRepository {
 
@@ -55,6 +52,7 @@ public class StockRepository {
         } catch (IOException ignored) {}
         return "HTTP " + response.code();
     }
+
     public void getStock(String ticker, @NonNull Callback<Stock> cb) {
         api.getStockSingle("application/vnd.pgrst.object+json",
                         "eq." + ticker, "*")

@@ -8,17 +8,18 @@ import com.fahd.casatrader.data.repo.AuthRepository;
 
 public class AuthViewModel extends ViewModel {
 
-    public enum State { IDLE, LOADING, SUCCESS, ERROR }
+    public enum State { IDLE, LOADING, SUCCESS, SUCCESS_CONFIRMATION_REQUIRED, ERROR }
 
     public static class UiState {
         public final State state;
-        public final String errorMessage;   // null unless state == ERROR
+        public final String errorMessage;   
 
         private UiState(State s, String e) { this.state = s; this.errorMessage = e; }
 
         public static UiState idle()                 { return new UiState(State.IDLE, null); }
         public static UiState loading()              { return new UiState(State.LOADING, null); }
         public static UiState success()              { return new UiState(State.SUCCESS, null); }
+        public static UiState successConfirmationRequired() { return new UiState(State.SUCCESS_CONFIRMATION_REQUIRED, null); }
         public static UiState error(String message)  { return new UiState(State.ERROR, message); }
     }
 
@@ -35,7 +36,10 @@ public class AuthViewModel extends ViewModel {
         }
         uiState.setValue(UiState.loading());
         repo.login(email, password, new AuthRepository.AuthCallback() {
-            @Override public void onSuccess() { uiState.postValue(UiState.success()); }
+            @Override public void onSuccess(boolean sessionStarted) {
+                if (sessionStarted) uiState.postValue(UiState.success());
+                else uiState.postValue(UiState.successConfirmationRequired());
+            }
             @Override public void onError(String m) { uiState.postValue(UiState.error(m)); }
         });
     }
@@ -49,11 +53,13 @@ public class AuthViewModel extends ViewModel {
         }
         uiState.setValue(UiState.loading());
         repo.signup(email, password, username, new AuthRepository.AuthCallback() {
-            @Override public void onSuccess() { uiState.postValue(UiState.success()); }
+            @Override public void onSuccess(boolean sessionStarted) {
+                if (sessionStarted) uiState.postValue(UiState.success());
+                else uiState.postValue(UiState.successConfirmationRequired());
+            }
             @Override public void onError(String m) { uiState.postValue(UiState.error(m)); }
         });
     }
 
-    /** Reset to idle after the activity has handled an error/success. */
     public void resetState() { uiState.setValue(UiState.idle()); }
 }

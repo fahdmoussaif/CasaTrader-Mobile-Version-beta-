@@ -63,7 +63,7 @@ public class StockListFragment extends Fragment {
                     binding.loadingPb.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
                     adapter.submitList(state.stocks);
-                    binding.emptyTv.setVisibility(state.stocks.isEmpty() ? View.VISIBLE : View.GONE);
+                    binding.emptyState.setVisibility(state.stocks.isEmpty() ? View.VISIBLE : View.GONE);
                     break;
                 case ERROR:
                     binding.loadingPb.setVisibility(View.GONE);

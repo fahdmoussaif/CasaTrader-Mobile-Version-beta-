@@ -65,6 +65,9 @@ public class TransactionsAdapter extends ListAdapter<Transaction, TransactionsAd
         h.typePillTv.setBackgroundResource(isBuy
                 ? R.drawable.bg_pill_buy
                 : R.drawable.bg_pill_sell);
+        h.typePillTv.setTextColor(ContextCompat.getColor(ctx, isBuy
+                ? R.color.pill_loss_text
+                : R.color.pill_gain_text));
 
         h.tickerTv.setText(t.ticker);
 
@@ -72,7 +75,6 @@ public class TransactionsAdapter extends ListAdapter<Transaction, TransactionsAd
                 t.shares != null ? t.shares : 0,
                 t.price != null ? t.price : 0));
 
-        // BUY = cash out (negative for the user). SELL = cash in (positive).
         double cashImpact = t.total != null ? t.total : 0;
         String sign = isBuy ? "−" : "+";
         h.totalTv.setText(String.format(Locale.US, "%s%,.2f", sign, cashImpact));
@@ -89,7 +91,6 @@ public class TransactionsAdapter extends ListAdapter<Transaction, TransactionsAd
     private static String formatDate(String iso) {
         if (iso == null) return "";
         try {
-            // PostgREST returns "2026-05-07T14:30:00.123456+00:00"
             OffsetDateTime odt = OffsetDateTime.parse(iso);
             return odt.atZoneSameInstant(ZoneId.systemDefault()).format(DATE_FMT);
         } catch (Exception e) {

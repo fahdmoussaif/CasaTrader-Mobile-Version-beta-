@@ -1,13 +1,17 @@
 package com.fahd.casatrader.ui.portfolio;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,7 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.fahd.casatrader.R;
 import com.fahd.casatrader.data.model.HoldingWithStock;
 import com.fahd.casatrader.databinding.FragmentPortfolioBinding;
+import com.fahd.casatrader.ui.auth.LoginActivity;
 import com.fahd.casatrader.ui.detail.StockDetailActivity;
+import com.fahd.casatrader.util.TokenStore;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +57,8 @@ public class PortfolioFragment extends Fragment {
 
         binding.swipeRefresh.setOnRefreshListener(viewModel::load);
 
+        binding.logoutBtn.setOnClickListener(v -> showLogoutConfirmation());
+
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             switch (state.loadState) {
                 case LOADING:
@@ -60,7 +69,7 @@ public class PortfolioFragment extends Fragment {
                     binding.swipeRefresh.setRefreshing(false);
                     renderSummary(state.profile, state.holdings);
                     adapter.submitList(state.holdings);
-                    binding.emptyTv.setVisibility(state.holdings.isEmpty() ? View.VISIBLE : View.GONE);
+                    binding.emptyState.setVisibility(state.holdings.isEmpty() ? View.VISIBLE : View.GONE);
                     binding.holdingsRv.setVisibility(state.holdings.isEmpty() ? View.GONE : View.VISIBLE);
                     break;
                 case ERROR:
@@ -76,6 +85,26 @@ public class PortfolioFragment extends Fragment {
         if (savedInstanceState == null) viewModel.load();
     }
 
+    private void showLogoutConfirmation() {
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Log out?")
+                .setMessage("You'll need to sign in again to access your portfolio.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Log out", (d, which) -> {
+                    TokenStore.getInstance(requireContext()).clear();
+                    Intent intent = new Intent(requireContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    requireActivity().finish();
+                })
+                .show();
+
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (positiveButton != null) {
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_error));
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -87,13 +116,16 @@ public class PortfolioFragment extends Fragment {
 
     private void renderSummary(com.fahd.casatrader.data.model.Profile profile,
                                List<HoldingWithStock> holdings) {
-        double cash = profile != null && profile.cashBalance != null ? profile.cashBalance : 0;
+        if (profile != null && profile.username != null) {
+            binding.usernameTv.setText(getString(R.string.hello_username, profile.username));
+        } else {
+            binding.usernameTv.setText(R.string.my_portfolio);
+        }
 
+        double cash = profile != null && profile.cashBalance != null ? profile.cashBalance : 0;
         double holdingsValue = 0;
-        double costBasis = 0;
         for (HoldingWithStock h : holdings) {
             holdingsValue += h.currentValue();
-            costBasis += h.costBasis();
         }
         double totalValue = cash + holdingsValue;
         double totalPl = totalValue - STARTING_CASH;

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurfaceContainerLowest">
+    android:background="?attr/colorSurface">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -20,6 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
                 android:paddingBottom="16dp"/>
 
             <ProgressBar
@@ -29,15 +30,31 @@
                 android:layout_gravity="center"
                 android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/emptyTv"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/emptyState"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="32dp"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:text="No transactions yet — your trades will appear here."
-                android:textColor="?android:textColorSecondary"
-                android:visibility="gone"/>
+                android:layout_gravity="center"
+                android:visibility="gone">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_history"
+                    app:tint="?attr/colorOnSurfaceVariant"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="Empty state icon"/>
+                <TextView
+                    android:id="@+id/emptyTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="32dp"
+                    android:gravity="center"
+                    android:text="No transactions yet — your trades will appear here."
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"/>
+            </LinearLayout>
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

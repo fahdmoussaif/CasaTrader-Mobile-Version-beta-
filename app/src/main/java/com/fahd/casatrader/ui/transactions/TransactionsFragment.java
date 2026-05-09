@@ -51,7 +51,7 @@ public class TransactionsFragment extends Fragment {
                     binding.loadingPb.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
                     adapter.submitList(state.transactions);
-                    binding.emptyTv.setVisibility(state.transactions.isEmpty() ? View.VISIBLE : View.GONE);
+                    binding.emptyState.setVisibility(state.transactions.isEmpty() ? View.VISIBLE : View.GONE);
                     binding.transactionsRv.setVisibility(state.transactions.isEmpty() ? View.GONE : View.VISIBLE);
                     break;
                 case ERROR:

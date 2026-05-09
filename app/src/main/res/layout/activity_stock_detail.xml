@@ -4,19 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurfaceContainerLowest">
+    android:background="?attr/colorSurface">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         app:elevation="0dp">
-
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back"/>
+            android:layout_height="88dp"
+            android:paddingTop="24dp"
+            app:titleTextAppearance="?attr/textAppearanceHeadlineSmall"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="?attr/colorOnSurface"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -32,7 +34,6 @@
             android:orientation="vertical"
             android:paddingHorizontal="16dp">
 
-            <!-- ========== HEADER ========== -->
             <TextView
                 android:id="@+id/tickerTv"
                 android:layout_width="wrap_content"
@@ -45,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:textColorSecondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:layout_marginTop="2dp"/>
 
             <TextView
@@ -63,67 +64,66 @@
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginTop="2dp"/>
 
-            <!-- ========== CHART CARD ========== -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.App.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:cardCornerRadius="16dp">
-
+                android:layout_marginTop="24dp">
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="240dp">
-
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/priceChart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:padding="12dp"/>
-
                     <ProgressBar
                         android:id="@+id/chartLoadingPb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"/>
-
-                    <TextView
-                        android:id="@+id/chartEmptyTv"
+                    <LinearLayout
+                        android:id="@+id/chartEmptyState"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="No price history available"
-                        android:textColor="?android:textColorSecondary"
-                        android:visibility="gone"/>
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_trending_up"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="Empty state icon"/>
+                        <TextView
+                            android:id="@+id/chartEmptyTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No price history available"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ========== QUOTE DETAILS CARD ========== -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.App.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:cardCornerRadius="16dp">
-
+                android:layout_marginTop="16dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp">
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Quote details"
                         android:textAppearance="?attr/textAppearanceTitleSmall"
                         android:layout_marginBottom="12dp"/>
-
-                    <!-- Row 1: Open / High -->
                     <LinearLayout style="@style/QuoteRow">
                         <LinearLayout style="@style/QuoteCell">
                             <TextView style="@style/QuoteLabel" android:text="Open"/>
@@ -134,8 +134,6 @@
                             <TextView android:id="@+id/highValueTv" style="@style/QuoteValue"/>
                         </LinearLayout>
                     </LinearLayout>
-
-                    <!-- Row 2: Low / Prev close -->
                     <LinearLayout style="@style/QuoteRow">
                         <LinearLayout style="@style/QuoteCell">
                             <TextView style="@style/QuoteLabel" android:text="Low"/>
@@ -146,8 +144,6 @@
                             <TextView android:id="@+id/prevCloseValueTv" style="@style/QuoteValue"/>
                         </LinearLayout>
                     </LinearLayout>
-
-                    <!-- Row 3: Volume / Trades -->
                     <LinearLayout style="@style/QuoteRow">
                         <LinearLayout style="@style/QuoteCell">
                             <TextView style="@style/QuoteLabel" android:text="Volume"/>
@@ -158,8 +154,6 @@
                             <TextView android:id="@+id/tradesValueTv" style="@style/QuoteValue"/>
                         </LinearLayout>
                     </LinearLayout>
-
-                    <!-- Row 4: Sector / Market cap -->
                     <LinearLayout style="@style/QuoteRow">
                         <LinearLayout style="@style/QuoteCell">
                             <TextView style="@style/QuoteLabel" android:text="Sector"/>
@@ -173,15 +167,14 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ========== ACTION BUTTONS ========== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="20dp">
-
+                android:layout_marginTop="24dp">
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buyBtn"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_weight="1"
@@ -189,14 +182,13 @@
                     android:text="Buy"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     app:cornerRadius="14dp"/>
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/sellBtn"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:text="Sell"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     app:cornerRadius="14dp"/>
@@ -209,8 +201,8 @@
                 android:layout_marginTop="8dp"
                 style="@style/Widget.Material3.Button.TextButton.Icon"
                 app:icon="@drawable/ic_star_outline"
-                android:text="Add to watchlist"/>
-
+                android:text="Add to watchlist"
+                android:textAppearance="?attr/textAppearanceLabelLarge"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

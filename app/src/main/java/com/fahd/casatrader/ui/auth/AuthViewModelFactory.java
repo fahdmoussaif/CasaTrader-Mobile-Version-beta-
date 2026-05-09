@@ -11,9 +11,6 @@ import com.fahd.casatrader.data.remote.ApiClient;
 import com.fahd.casatrader.data.repo.AuthRepository;
 import com.fahd.casatrader.util.TokenStore;
 
-/**
- * Factory for creating AuthViewModel with its required dependencies.
- */
 public class AuthViewModelFactory implements ViewModelProvider.Factory {
     private final Context appContext;
 

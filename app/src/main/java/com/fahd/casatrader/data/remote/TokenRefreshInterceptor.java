@@ -10,10 +10,6 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Catches 401 responses on /rest/v1/ endpoints, refreshes the JWT once, and
- * retries the original request. Concurrent 401s share a single refresh.
- */
 public class TokenRefreshInterceptor implements Interceptor {
 
     public interface Refresher {
@@ -46,13 +42,11 @@ public class TokenRefreshInterceptor implements Interceptor {
             String currentToken = tokenStore.getAccessToken();
 
             if (currentToken != null && !currentToken.equals(tokenAtFailure)) {
-                // Another thread refreshed while we were on the wire — just retry.
                 refreshed = true;
             } else {
                 response.close();
                 refreshed = refresher.refresh();
                 if (!refreshed) {
-                    // Refresh token is dead. Clear and surface the original 401.
                     tokenStore.clear();
                     return chain.proceed(request);
                 }

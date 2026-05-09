@@ -6,4 +6,6 @@
     <string name="password">Password</string>
     <string name="log_in">Log in</string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
+    <string name="hello_username">Hello, %1$s</string>
+    <string name="my_portfolio">My Portfolio</string>
 </resources>

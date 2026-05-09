@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
                 goHome();
                 return;
             }
-            // Token expired but we have a refresh token — try silently.
+            
             showRefreshingState();
             new Thread(() -> {
                 ApiClient client = ApiClient.getInstance(tokenStore);
@@ -86,6 +86,9 @@ public class LoginActivity extends AppCompatActivity {
 
             if (state.state == AuthViewModel.State.SUCCESS) {
                 goHome();
+            } else if (state.state == AuthViewModel.State.SUCCESS_CONFIRMATION_REQUIRED) {
+                Toast.makeText(this, "Please confirm your email before logging in.", Toast.LENGTH_LONG).show();
+                viewModel.resetState();
             } else if (state.state == AuthViewModel.State.ERROR) {
                 Toast.makeText(this, state.errorMessage, Toast.LENGTH_LONG).show();
                 viewModel.resetState();

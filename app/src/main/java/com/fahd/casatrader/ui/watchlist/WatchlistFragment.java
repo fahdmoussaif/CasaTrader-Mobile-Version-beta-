@@ -59,7 +59,7 @@ public class WatchlistFragment extends Fragment {
                     binding.loadingPb.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
                     adapter.submitList(state.entries);
-                    binding.emptyTv.setVisibility(state.entries.isEmpty() ? View.VISIBLE : View.GONE);
+                    binding.emptyState.setVisibility(state.entries.isEmpty() ? View.VISIBLE : View.GONE);
                     binding.watchlistRv.setVisibility(state.entries.isEmpty() ? View.GONE : View.VISIBLE);
                     break;
                 case ERROR:

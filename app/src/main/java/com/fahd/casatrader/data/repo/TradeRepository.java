@@ -48,7 +48,6 @@ public class TradeRepository {
                 });
     }
 
-    /** Returns the holding for the given ticker, or null if user owns none. */
     public void getHolding(String ticker, @NonNull Callback<Holding> cb) {
         api.getMyHolding("eq." + ticker, "*").enqueue(new retrofit2.Callback<List<Holding>>() {
             @Override public void onResponse(@NonNull Call<List<Holding>> c, @NonNull Response<List<Holding>> r) {
@@ -88,7 +87,6 @@ public class TradeRepository {
                 });
     }
 
-    /** Generic HTTP error. */
     private String parseError(Response<?> response) {
         try {
             if (response.errorBody() != null)
@@ -97,16 +95,10 @@ public class TradeRepository {
         return "HTTP " + response.code();
     }
 
-    /**
-     * PostgREST error from a RAISE EXCEPTION in plpgsql. Format is roughly:
-     * {"code":"P0001","message":"insufficient_funds: have 50000, need 65650","hint":null,"details":null}
-     * We extract the "message" field for display.
-     */
     private String parsePostgresError(Response<?> response) {
         try {
             if (response.errorBody() != null) {
                 String raw = response.errorBody().string();
-                // Crude extraction; good enough since we control the message format
                 int msgStart = raw.indexOf("\"message\":\"");
                 if (msgStart >= 0) {
                     int valStart = msgStart + "\"message\":\"".length();
@@ -119,7 +111,6 @@ public class TradeRepository {
         return "Trade failed (" + response.code() + ")";
     }
 
-    /** Map our SQL error codes to friendlier UI strings. */
     private String humanize(String msg) {
         if (msg.startsWith("insufficient_funds")) return "Not enough cash for this purchase.";
         if (msg.startsWith("insufficient_shares")) return "You don't own enough shares to sell that many.";
@@ -128,6 +119,6 @@ public class TradeRepository {
         if (msg.startsWith("invalid_price")) return "Invalid price.";
         if (msg.startsWith("not_authenticated")) return "Please log in again.";
         if (msg.startsWith("unknown_ticker")) return "Unknown stock ticker.";
-        return msg;  // unmapped — show raw
+        return msg;
     }
 }

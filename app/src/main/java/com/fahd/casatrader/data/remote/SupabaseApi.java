@@ -24,7 +24,7 @@ import com.fahd.casatrader.data.model.WriteDtos.TradeResult;
 public interface SupabaseApi {
 
     @GET("rest/v1/profiles")
-    Call<List<Profile>> getMyProfile(@Query("id") String idEq,             // "eq.<uuid>"
+    Call<List<Profile>> getMyProfile(@Query("id") String idEq,
                                      @Query("select") String select);
 
 
@@ -51,7 +51,6 @@ public interface SupabaseApi {
     @POST("rest/v1/rpc/sell_stock")
     Call<TradeResult> sellStock(@Body SellRequest body);
 
-    /** Holding for current user + given ticker. Returns 0 or 1 row. */
     @GET("rest/v1/holdings")
     Call<List<Holding>> getMyHolding(@Query("ticker") String tickerEq,
                                      @Query("select") String select);
@@ -65,7 +64,6 @@ public interface SupabaseApi {
     Call<List<WatchlistEntry>> getMyWatchlist(@Query("select") String select,
                                               @Query("order") String order);
 
-    /** Check whether one specific ticker is on the watchlist. Returns 0 or 1 row. */
     @GET("rest/v1/watchlist")
     Call<List<WatchlistEntry>> getWatchlistEntry(@Query("ticker") String tickerEq,
                                                  @Query("select") String select);

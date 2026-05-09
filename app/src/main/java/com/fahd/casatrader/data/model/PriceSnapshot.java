@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class PriceSnapshot {
     @SerializedName("id")             public Long id;
     @SerializedName("ticker")         public String ticker;
-    @SerializedName("trade_date")     public String tradeDate;     // "YYYY-MM-DD"
+    @SerializedName("trade_date")     public String tradeDate;
     @SerializedName("price")          public Double price;
     @SerializedName("open")           public Double open;
     @SerializedName("high")           public Double high;

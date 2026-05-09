@@ -61,7 +61,7 @@ public class TokenStore {
     public boolean isAccessTokenExpired() {
         long expires = getExpiresAt();
         if (expires == 0L) return true;
-        // 30s safety margin so we don't fire requests with a token about to expire mid-flight
+        
         return System.currentTimeMillis() / 1000L >= expires - 30;
     }
 
