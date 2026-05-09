@@ -26,28 +26,13 @@
             android:exported="true" />
 
         <activity
-            android:name=".ui.stocks.StockListActivity"
+            android:name=".MainActivity"
             android:exported="false" />
 
         <activity
             android:name=".ui.detail.StockDetailActivity"
             android:exported="false"
-            android:parentActivityName=".ui.stocks.StockListActivity"/>
-
-        <activity
-            android:name=".ui.portfolio.PortfolioActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.stocks.StockListActivity"/>
-
-        <activity
-            android:name=".ui.transactions.TransactionsActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.portfolio.PortfolioActivity"/>
-
-        <activity
-            android:name=".ui.watchlist.WatchlistActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.stocks.StockListActivity"/>
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

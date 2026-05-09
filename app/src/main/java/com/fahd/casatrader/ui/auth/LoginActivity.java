@@ -8,9 +8,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fahd.casatrader.MainActivity;
 import com.fahd.casatrader.data.remote.ApiClient;
 import com.fahd.casatrader.databinding.ActivityLoginBinding;
-import com.fahd.casatrader.ui.stocks.StockListActivity;
 import com.fahd.casatrader.util.TokenStore;
 
 public class LoginActivity extends AppCompatActivity {
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goHome() {
-        Intent home = new Intent(this, StockListActivity.class);
+        Intent home = new Intent(this, MainActivity.class);
         home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(home);
         finish();

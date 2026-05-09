@@ -1,46 +1,48 @@
 package com.fahd.casatrader.ui.transactions;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.fahd.casatrader.databinding.ActivityTransactionsBinding;
+import com.fahd.casatrader.databinding.FragmentTransactionsBinding;
 import com.fahd.casatrader.ui.detail.StockDetailActivity;
 
-public class TransactionsActivity extends AppCompatActivity {
+public class TransactionsFragment extends Fragment {
 
-    public static Intent newIntent(Context ctx) { return new Intent(ctx, TransactionsActivity.class); }
-
-    private ActivityTransactionsBinding binding;
+    private FragmentTransactionsBinding binding;
     private TransactionsViewModel viewModel;
     private TransactionsAdapter adapter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityTransactionsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentTransactionsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        setSupportActionBar(binding.toolbar);
-        binding.toolbar.setNavigationOnClickListener(v -> finish());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this, new TransactionsViewModelFactory(this))
+        viewModel = new ViewModelProvider(this, new TransactionsViewModelFactory(requireContext()))
                 .get(TransactionsViewModel.class);
 
         adapter = new TransactionsAdapter(t ->
-                startActivity(StockDetailActivity.newIntent(this, t.ticker)));
-        binding.transactionsRv.setLayoutManager(new LinearLayoutManager(this));
+                startActivity(StockDetailActivity.newIntent(requireContext(), t.ticker)));
+        binding.transactionsRv.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.transactionsRv.setAdapter(adapter);
 
         binding.swipeRefresh.setOnRefreshListener(viewModel::load);
 
-        viewModel.getUiState().observe(this, state -> {
+        viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             switch (state.loadState) {
                 case LOADING:
                     if (adapter.getItemCount() == 0) binding.loadingPb.setVisibility(View.VISIBLE);
@@ -55,7 +57,7 @@ public class TransactionsActivity extends AppCompatActivity {
                 case ERROR:
                     binding.loadingPb.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
-                    Toast.makeText(this, state.errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show();
                     break;
                 case IDLE:
                 default: break;
@@ -66,12 +68,17 @@ public class TransactionsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        // Refresh in case the user came back from making a trade
         if (viewModel.getUiState().getValue() != null
                 && viewModel.getUiState().getValue().loadState != TransactionsViewModel.LoadState.LOADING) {
             viewModel.load();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

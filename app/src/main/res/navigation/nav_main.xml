@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/stockListFragment">
+    <fragment android:id="@+id/stockListFragment"
+        android:name="com.fahd.casatrader.ui.stocks.StockListFragment"
+        android:label="Stocks"/>
+    <fragment android:id="@+id/watchlistFragment"
+        android:name="com.fahd.casatrader.ui.watchlist.WatchlistFragment"
+        android:label="Watchlist"/>
+    <fragment android:id="@+id/portfolioFragment"
+        android:name="com.fahd.casatrader.ui.portfolio.PortfolioFragment"
+        android:label="Portfolio"/>
+    <fragment android:id="@+id/transactionsFragment"
+        android:name="com.fahd.casatrader.ui.transactions.TransactionsFragment"
+        android:label="History"/>
+</navigation>

@@ -1,54 +1,56 @@
 package com.fahd.casatrader.ui.watchlist;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.fahd.casatrader.databinding.ActivityWatchlistBinding;
+import com.fahd.casatrader.databinding.FragmentWatchlistBinding;
 import com.fahd.casatrader.ui.detail.StockDetailActivity;
 
-public class WatchlistActivity extends AppCompatActivity {
+public class WatchlistFragment extends Fragment {
 
-    public static Intent newIntent(Context ctx) { return new Intent(ctx, WatchlistActivity.class); }
-
-    private ActivityWatchlistBinding binding;
+    private FragmentWatchlistBinding binding;
     private WatchlistViewModel viewModel;
     private WatchlistAdapter adapter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityWatchlistBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentWatchlistBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        setSupportActionBar(binding.toolbar);
-        binding.toolbar.setNavigationOnClickListener(v -> finish());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this, new WatchlistViewModelFactory(this))
+        viewModel = new ViewModelProvider(this, new WatchlistViewModelFactory(requireContext()))
                 .get(WatchlistViewModel.class);
 
         adapter = new WatchlistAdapter(new WatchlistAdapter.OnEntryActionListener() {
             @Override
             public void onEntryClick(com.fahd.casatrader.data.model.WatchlistEntry entry) {
-                startActivity(StockDetailActivity.newIntent(WatchlistActivity.this, entry.ticker));
+                startActivity(StockDetailActivity.newIntent(requireContext(), entry.ticker));
             }
             @Override
             public void onRemoveClick(com.fahd.casatrader.data.model.WatchlistEntry entry) {
                 viewModel.remove(entry.ticker);
             }
         });
-        binding.watchlistRv.setLayoutManager(new LinearLayoutManager(this));
+        binding.watchlistRv.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.watchlistRv.setAdapter(adapter);
 
         binding.swipeRefresh.setOnRefreshListener(viewModel::load);
 
-        viewModel.getUiState().observe(this, state -> {
+        viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             switch (state.loadState) {
                 case LOADING:
                     if (adapter.getItemCount() == 0) binding.loadingPb.setVisibility(View.VISIBLE);
@@ -63,7 +65,7 @@ public class WatchlistActivity extends AppCompatActivity {
                 case ERROR:
                     binding.loadingPb.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
-                    Toast.makeText(this, state.errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show();
                     break;
                 case IDLE:
                 default: break;
@@ -74,11 +76,17 @@ public class WatchlistActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (viewModel.getUiState().getValue() != null
                 && viewModel.getUiState().getValue().loadState != WatchlistViewModel.LoadState.LOADING) {
             viewModel.load();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

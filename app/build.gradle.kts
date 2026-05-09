@@ -73,6 +73,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("androidx.gridlayout:gridlayout:1.0.0")
+    implementation("androidx.fragment:fragment:1.8.5")  // probably already there
+    implementation("androidx.navigation:navigation-fragment:2.8.5")
+    implementation("androidx.navigation:navigation-ui:2.8.5")
 
     // Charting
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")

@@ -1,55 +1,56 @@
 package com.fahd.casatrader.ui.portfolio;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.fahd.casatrader.R;
 import com.fahd.casatrader.data.model.HoldingWithStock;
-import com.fahd.casatrader.databinding.ActivityPortfolioBinding;
+import com.fahd.casatrader.databinding.FragmentPortfolioBinding;
 import com.fahd.casatrader.ui.detail.StockDetailActivity;
 
 import java.util.List;
 import java.util.Locale;
 
-public class PortfolioActivity extends AppCompatActivity {
+public class PortfolioFragment extends Fragment {
 
     private static final double STARTING_CASH = 100_000.00;
 
-    public static Intent newIntent(Context ctx) { return new Intent(ctx, PortfolioActivity.class); }
-
-    private ActivityPortfolioBinding binding;
+    private FragmentPortfolioBinding binding;
     private PortfolioViewModel viewModel;
     private HoldingsAdapter adapter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityPortfolioBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentPortfolioBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        setSupportActionBar(binding.toolbar);
-        binding.toolbar.setNavigationOnClickListener(v -> finish());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this, new PortfolioViewModelFactory(this))
+        viewModel = new ViewModelProvider(this, new PortfolioViewModelFactory(requireContext()))
                 .get(PortfolioViewModel.class);
 
         adapter = new HoldingsAdapter(holding ->
-                startActivity(StockDetailActivity.newIntent(this, holding.ticker)));
-        binding.holdingsRv.setLayoutManager(new LinearLayoutManager(this));
+                startActivity(StockDetailActivity.newIntent(requireContext(), holding.ticker)));
+        binding.holdingsRv.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.holdingsRv.setAdapter(adapter);
 
         binding.swipeRefresh.setOnRefreshListener(viewModel::load);
 
-        viewModel.getUiState().observe(this, state -> {
+        viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             switch (state.loadState) {
                 case LOADING:
                     if (adapter.getItemCount() == 0) binding.loadingPb.setVisibility(View.VISIBLE);
@@ -65,7 +66,7 @@ public class PortfolioActivity extends AppCompatActivity {
                 case ERROR:
                     binding.loadingPb.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
-                    Toast.makeText(this, state.errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show();
                     break;
                 case IDLE:
                 default: break;
@@ -76,9 +77,8 @@ public class PortfolioActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        // Refresh whenever we return from StockDetailActivity (after a possible trade)
         if (viewModel.getUiState().getValue() != null
                 && viewModel.getUiState().getValue().loadState != PortfolioViewModel.LoadState.LOADING) {
             viewModel.load();
@@ -107,23 +107,15 @@ public class PortfolioActivity extends AppCompatActivity {
         int colorRes = totalPl > 0 ? R.color.gain_green
                 : totalPl < 0 ? R.color.loss_red
                 : R.color.neutral_gray;
-        binding.totalPlTv.setTextColor(ContextCompat.getColor(this, colorRes));
+        binding.totalPlTv.setTextColor(ContextCompat.getColor(requireContext(), colorRes));
 
         binding.cashTv.setText(String.format(Locale.US, "%,.2f", cash));
         binding.holdingsValueTv.setText(String.format(Locale.US, "%,.2f", holdingsValue));
     }
-    @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_portfolio, menu);
-        return true;
-    }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
-        if (item.getItemId() == R.id.action_transactions) {
-            startActivity(com.fahd.casatrader.ui.transactions.TransactionsActivity.newIntent(this));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

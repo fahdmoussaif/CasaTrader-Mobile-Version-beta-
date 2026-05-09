@@ -8,8 +8,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fahd.casatrader.MainActivity;
 import com.fahd.casatrader.databinding.ActivitySignupBinding;
-import com.fahd.casatrader.ui.stocks.StockListActivity;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -38,7 +38,7 @@ public class SignupActivity extends AppCompatActivity {
             binding.signupBtn.setEnabled(state.state != AuthViewModel.State.LOADING);
 
             if (state.state == AuthViewModel.State.SUCCESS) {
-                Intent home = new Intent(this, StockListActivity.class);
+                Intent home = new Intent(this, MainActivity.class);
                 home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(home);
                 finish();
