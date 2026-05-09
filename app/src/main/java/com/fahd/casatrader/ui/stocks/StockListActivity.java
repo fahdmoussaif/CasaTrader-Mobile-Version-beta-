@@ -1,18 +1,23 @@
 package com.fahd.casatrader.ui.stocks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.fahd.casatrader.R;
 import com.fahd.casatrader.databinding.ActivityStockListBinding;
 import com.fahd.casatrader.ui.detail.StockDetailActivity;
+import com.fahd.casatrader.ui.portfolio.PortfolioActivity;
+import com.fahd.casatrader.util.TokenStore;
 
 public class StockListActivity extends AppCompatActivity {
 
@@ -75,5 +80,27 @@ public class StockListActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             viewModel.load();
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_stock_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_portfolio) {
+            startActivity(PortfolioActivity.newIntent(this));
+            return true;
+        }
+        if (id == R.id.action_logout) {
+            TokenStore.getInstance(this).clear();
+            startActivity(new Intent(this, com.fahd.casatrader.ui.auth.LoginActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

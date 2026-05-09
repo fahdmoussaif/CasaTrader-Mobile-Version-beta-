@@ -1,5 +1,6 @@
 package com.fahd.casatrader.data.remote;
 
+import com.fahd.casatrader.data.model.HoldingWithStock;
 import com.fahd.casatrader.data.model.PriceSnapshot;
 import com.fahd.casatrader.data.model.Profile;
 import com.fahd.casatrader.data.model.Stock;
@@ -50,5 +51,8 @@ public interface SupabaseApi {
     @GET("rest/v1/holdings")
     Call<List<Holding>> getMyHolding(@Query("ticker") String tickerEq,
                                      @Query("select") String select);
+    @GET("rest/v1/holdings")
+    Call<List<HoldingWithStock>> getMyHoldingsWithStock(@Query("select") String select,
+                                                        @Query("order") String order);
 
 }
