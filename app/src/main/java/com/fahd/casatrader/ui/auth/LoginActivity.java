@@ -8,8 +8,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.fahd.casatrader.MainActivity;
 import com.fahd.casatrader.databinding.ActivityLoginBinding;
+import com.fahd.casatrader.ui.stocks.StockListActivity;
 import com.fahd.casatrader.util.TokenStore;
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (TokenStore.getInstance(this).isLoggedIn()
                 && !TokenStore.getInstance(this).isAccessTokenExpired()) {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, StockListActivity.class));
             finish();
             return;
         }
@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             binding.loginBtn.setEnabled(state.state != AuthViewModel.State.LOADING);
 
             if (state.state == AuthViewModel.State.SUCCESS) {
-                Intent home = new Intent(this, MainActivity.class);
+                Intent home = new Intent(this, StockListActivity.class);
                 home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(home);
                 finish();

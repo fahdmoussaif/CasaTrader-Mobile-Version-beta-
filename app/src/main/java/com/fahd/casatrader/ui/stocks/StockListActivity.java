@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.fahd.casatrader.databinding.ActivityStockListBinding;
+import com.fahd.casatrader.ui.detail.StockDetailActivity;
 
 public class StockListActivity extends AppCompatActivity {
 
@@ -30,10 +31,8 @@ public class StockListActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this, new StockListViewModelFactory(this))
                 .get(StockListViewModel.class);
 
-        adapter = new StockListAdapter(stock -> {
-            // TODO step 6: open StockDetailActivity
-            Toast.makeText(this, "Tapped " + stock.ticker, Toast.LENGTH_SHORT).show();
-        });
+        adapter = new StockListAdapter(stock ->
+                startActivity(StockDetailActivity.newIntent(this, stock.ticker)));
         binding.stocksRv.setLayoutManager(new LinearLayoutManager(this));
         binding.stocksRv.setAdapter(adapter);
 

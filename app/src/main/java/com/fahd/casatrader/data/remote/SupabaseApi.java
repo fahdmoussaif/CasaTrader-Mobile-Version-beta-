@@ -1,5 +1,6 @@
 package com.fahd.casatrader.data.remote;
 
+import com.fahd.casatrader.data.model.PriceSnapshot;
 import com.fahd.casatrader.data.model.Profile;
 import com.fahd.casatrader.data.model.Stock;
 
@@ -23,4 +24,14 @@ public interface SupabaseApi {
     @GET("rest/v1/stocks")
     Call<List<Stock>> getAllStocks(@Query("select") String select,
                                    @Query("order") String order);
+    @GET("rest/v1/stocks")
+    Call<Stock> getStockSingle(@Header("Accept") String accept,
+                               @Query("ticker") String tickerEq,
+                               @Query("select") String select);
+
+    @GET("rest/v1/price_snapshots")
+    Call<List<PriceSnapshot>> getPriceHistory(@Query("ticker") String tickerEq,
+                                              @Query("select") String select,
+                                              @Query("order") String order,
+                                              @Query("limit") Integer limit);
 }

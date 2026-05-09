@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLowest">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp">
+
+            <!-- ========== HEADER ========== -->
+            <TextView
+                android:id="@+id/tickerTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/nameTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:textColorSecondary"
+                android:layout_marginTop="2dp"/>
+
+            <TextView
+                android:id="@+id/priceTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceDisplaySmall"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:id="@+id/changeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginTop="2dp"/>
+
+            <!-- ========== CHART CARD ========== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                app:cardCornerRadius="16dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp">
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/priceChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="12dp"/>
+
+                    <ProgressBar
+                        android:id="@+id/chartLoadingPb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/chartEmptyTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="No price history available"
+                        android:textColor="?android:textColorSecondary"
+                        android:visibility="gone"/>
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========== QUOTE DETAILS CARD ========== -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quote details"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Row 1: Open / High -->
+                    <LinearLayout style="@style/QuoteRow">
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Open"/>
+                            <TextView android:id="@+id/openValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="High"/>
+                            <TextView android:id="@+id/highValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Row 2: Low / Prev close -->
+                    <LinearLayout style="@style/QuoteRow">
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Low"/>
+                            <TextView android:id="@+id/lowValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Prev close"/>
+                            <TextView android:id="@+id/prevCloseValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Row 3: Volume / Trades -->
+                    <LinearLayout style="@style/QuoteRow">
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Volume"/>
+                            <TextView android:id="@+id/volumeValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Trades"/>
+                            <TextView android:id="@+id/tradesValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Row 4: Sector / Market cap -->
+                    <LinearLayout style="@style/QuoteRow">
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Sector"/>
+                            <TextView android:id="@+id/sectorValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                        <LinearLayout style="@style/QuoteCell">
+                            <TextView style="@style/QuoteLabel" android:text="Market cap"/>
+                            <TextView android:id="@+id/marketCapValueTv" style="@style/QuoteValue"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========== ACTION BUTTONS ========== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buyBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Buy"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    app:cornerRadius="14dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sellBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:text="Sell"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    app:cornerRadius="14dp"/>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/watchlistBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                app:icon="@drawable/ic_star_outline"
+                android:text="Add to watchlist"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

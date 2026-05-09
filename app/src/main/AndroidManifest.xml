@@ -28,6 +28,11 @@
         <activity
             android:name=".ui.stocks.StockListActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.detail.StockDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.stocks.StockListActivity"/>
     </application>
 
 </manifest>
