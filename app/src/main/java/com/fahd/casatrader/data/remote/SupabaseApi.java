@@ -13,6 +13,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import com.fahd.casatrader.data.model.Holding;
+import com.fahd.casatrader.data.model.Transaction;
 import com.fahd.casatrader.data.model.WriteDtos.BuyRequest;
 import com.fahd.casatrader.data.model.WriteDtos.SellRequest;
 import com.fahd.casatrader.data.model.WriteDtos.TradeResult;
@@ -54,5 +55,8 @@ public interface SupabaseApi {
     @GET("rest/v1/holdings")
     Call<List<HoldingWithStock>> getMyHoldingsWithStock(@Query("select") String select,
                                                         @Query("order") String order);
+    @GET("rest/v1/transactions")
+    Call<List<Transaction>> getMyTransactions(@Query("select") String select,
+                                              @Query("order") String order);
 
 }

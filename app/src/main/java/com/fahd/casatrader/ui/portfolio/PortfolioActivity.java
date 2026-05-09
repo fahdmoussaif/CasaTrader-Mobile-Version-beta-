@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -110,5 +111,19 @@ public class PortfolioActivity extends AppCompatActivity {
 
         binding.cashTv.setText(String.format(Locale.US, "%,.2f", cash));
         binding.holdingsValueTv.setText(String.format(Locale.US, "%,.2f", holdingsValue));
+    }
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_portfolio, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
+        if (item.getItemId() == R.id.action_transactions) {
+            startActivity(com.fahd.casatrader.ui.transactions.TransactionsActivity.newIntent(this));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
