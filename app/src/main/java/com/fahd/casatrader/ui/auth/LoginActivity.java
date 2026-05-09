@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fahd.casatrader.data.remote.ApiClient;
 import com.fahd.casatrader.databinding.ActivityLoginBinding;
 import com.fahd.casatrader.ui.stocks.StockListActivity;
 import com.fahd.casatrader.util.TokenStore;
@@ -20,15 +21,53 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
 
-        if (TokenStore.getInstance(this).isLoggedIn()
-                && !TokenStore.getInstance(this).isAccessTokenExpired()) {
-            startActivity(new Intent(this, StockListActivity.class));
-            finish();
+        TokenStore tokenStore = TokenStore.getInstance(this);
+
+        if (tokenStore.isLoggedIn()) {
+            if (!tokenStore.isAccessTokenExpired()) {
+                goHome();
+                return;
+            }
+            // Token expired but we have a refresh token — try silently.
+            showRefreshingState();
+            new Thread(() -> {
+                ApiClient client = ApiClient.getInstance(tokenStore);
+                boolean ok = client.refreshSync();
+                runOnUiThread(() -> {
+                    if (ok) goHome();
+                    else showLoginForm();
+                });
+            }).start();
             return;
         }
+
+        showLoginForm();
+    }
+
+    private void showRefreshingState() {
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.loadingPb.setVisibility(View.VISIBLE);
+        binding.loginBtn.setVisibility(View.GONE);
+        binding.goToSignupBtn.setVisibility(View.GONE);
+        binding.emailLayout.setVisibility(View.GONE);
+        binding.passwordLayout.setVisibility(View.GONE);
+        binding.titleTv.setVisibility(View.GONE);
+    }
+
+    private void showLoginForm() {
+        if (binding == null) {
+            binding = ActivityLoginBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+        } else {
+            binding.loginBtn.setVisibility(View.VISIBLE);
+            binding.goToSignupBtn.setVisibility(View.VISIBLE);
+            binding.emailLayout.setVisibility(View.VISIBLE);
+            binding.passwordLayout.setVisibility(View.VISIBLE);
+            binding.titleTv.setVisibility(View.VISIBLE);
+            binding.loadingPb.setVisibility(View.GONE);
+        }
 
         viewModel = new ViewModelProvider(this, new AuthViewModelFactory(this))
                 .get(AuthViewModel.class);
@@ -46,14 +85,18 @@ public class LoginActivity extends AppCompatActivity {
             binding.loginBtn.setEnabled(state.state != AuthViewModel.State.LOADING);
 
             if (state.state == AuthViewModel.State.SUCCESS) {
-                Intent home = new Intent(this, StockListActivity.class);
-                home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(home);
-                finish();
+                goHome();
             } else if (state.state == AuthViewModel.State.ERROR) {
                 Toast.makeText(this, state.errorMessage, Toast.LENGTH_LONG).show();
                 viewModel.resetState();
             }
         });
+    }
+
+    private void goHome() {
+        Intent home = new Intent(this, StockListActivity.class);
+        home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(home);
+        finish();
     }
 }
