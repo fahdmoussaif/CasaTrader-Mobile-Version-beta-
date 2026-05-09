@@ -15,7 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.fahd.casatrader.R;
 import com.fahd.casatrader.data.model.PriceSnapshot;
 import com.fahd.casatrader.data.model.Stock;
+import com.fahd.casatrader.data.remote.ApiClient;
+import com.fahd.casatrader.data.repo.WatchlistRepository;
 import com.fahd.casatrader.databinding.ActivityStockDetailBinding;
+import com.fahd.casatrader.util.TokenStore;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -39,6 +42,9 @@ public class StockDetailActivity extends AppCompatActivity
 
     private ActivityStockDetailBinding binding;
     private StockDetailViewModel viewModel;
+    private boolean isWatched = false;
+    private boolean watchlistBusy = false;
+    private WatchlistRepository watchlistRepo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +61,17 @@ public class StockDetailActivity extends AppCompatActivity
 
         viewModel = new ViewModelProvider(this, new StockDetailViewModelFactory(this, ticker))
                 .get(StockDetailViewModel.class);
+        TokenStore ts = TokenStore.getInstance(this);
+        watchlistRepo = new WatchlistRepository(ApiClient.getInstance(ts), ts);
+        binding.watchlistBtn.setOnClickListener(v -> toggleWatchlist(ticker));
+        refreshWatchlistState(ticker);
 
         configureChart();
 
         binding.buyBtn.setOnClickListener(v -> openTradeDialog(TradeDialog.Mode.BUY));
         binding.sellBtn.setOnClickListener(v -> openTradeDialog(TradeDialog.Mode.SELL));
-        binding.watchlistBtn.setOnClickListener(v ->
-                Toast.makeText(this, "Watchlist: step 8", Toast.LENGTH_SHORT).show());
+        binding.watchlistBtn.setOnClickListener(v -> toggleWatchlist(ticker));
+        refreshWatchlistState(ticker);
 
         // ... rest of onCreate unchanged ...
         viewModel.getStockState().observe(this, this::renderStock);
@@ -241,6 +251,50 @@ public class StockDetailActivity extends AppCompatActivity
         }
         TradeDialog.newInstance(mode, state.stock.ticker, state.stock.price)
                 .show(getSupportFragmentManager(), "trade");
+    }
+
+    private void refreshWatchlistState(String ticker) {
+        watchlistRepo.isWatched(ticker, new WatchlistRepository.Callback<Boolean>() {
+            @Override public void onSuccess(Boolean watched) {
+                isWatched = watched;
+                updateWatchlistButton();
+            }
+            @Override public void onError(String message) { /* leave as-is */ }
+        });
+    }
+
+    private void updateWatchlistButton() {
+        if (isWatched) {
+            binding.watchlistBtn.setIconResource(R.drawable.ic_star_filled);
+            binding.watchlistBtn.setText("On your watchlist");
+        } else {
+            binding.watchlistBtn.setIconResource(R.drawable.ic_star_outline);
+            binding.watchlistBtn.setText("Add to watchlist");
+        }
+    }
+
+    private void toggleWatchlist(String ticker) {
+        if (watchlistBusy) return;
+        watchlistBusy = true;
+        boolean wasWatched = isWatched;
+
+        // Optimistic flip
+        isWatched = !wasWatched;
+        updateWatchlistButton();
+
+        WatchlistRepository.Callback<Void> cb = new WatchlistRepository.Callback<Void>() {
+            @Override public void onSuccess(Void data) { watchlistBusy = false; }
+            @Override public void onError(String message) {
+                // Roll back
+                isWatched = wasWatched;
+                updateWatchlistButton();
+                Toast.makeText(StockDetailActivity.this, message, Toast.LENGTH_LONG).show();
+                watchlistBusy = false;
+            }
+        };
+
+        if (wasWatched) watchlistRepo.remove(ticker, cb);
+        else            watchlistRepo.add(ticker, cb);
     }
 
 

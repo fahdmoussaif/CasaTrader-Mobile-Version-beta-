@@ -94,6 +94,10 @@ public class StockListActivity extends AppCompatActivity {
             startActivity(PortfolioActivity.newIntent(this));
             return true;
         }
+        if (id == R.id.action_watchlist) {
+            startActivity(com.fahd.casatrader.ui.watchlist.WatchlistActivity.newIntent(this));
+            return true;
+        }
         if (id == R.id.action_logout) {
             TokenStore.getInstance(this).clear();
             startActivity(new Intent(this, com.fahd.casatrader.ui.auth.LoginActivity.class)

@@ -43,6 +43,11 @@
             android:name=".ui.transactions.TransactionsActivity"
             android:exported="false"
             android:parentActivityName=".ui.portfolio.PortfolioActivity"/>
+
+        <activity
+            android:name=".ui.watchlist.WatchlistActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.stocks.StockListActivity"/>
     </application>
 
 </manifest>
