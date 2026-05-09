@@ -21,12 +21,15 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.fahd.casatrader.data.model.WriteDtos.TradeResult;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class StockDetailActivity extends AppCompatActivity {
+public class StockDetailActivity extends AppCompatActivity
+        implements TradeDialog.OnTradeCompletedListener {
 
     public static final String EXTRA_TICKER = "extra_ticker";
 
@@ -55,10 +58,12 @@ public class StockDetailActivity extends AppCompatActivity {
 
         configureChart();
 
-        binding.buyBtn.setOnClickListener(v -> Toast.makeText(this, "Buy: step 8", Toast.LENGTH_SHORT).show());
-        binding.sellBtn.setOnClickListener(v -> Toast.makeText(this, "Sell: step 8", Toast.LENGTH_SHORT).show());
-        binding.watchlistBtn.setOnClickListener(v -> Toast.makeText(this, "Watchlist: step 7", Toast.LENGTH_SHORT).show());
+        binding.buyBtn.setOnClickListener(v -> openTradeDialog(TradeDialog.Mode.BUY));
+        binding.sellBtn.setOnClickListener(v -> openTradeDialog(TradeDialog.Mode.SELL));
+        binding.watchlistBtn.setOnClickListener(v ->
+                Toast.makeText(this, "Watchlist: step 8", Toast.LENGTH_SHORT).show());
 
+        // ... rest of onCreate unchanged ...
         viewModel.getStockState().observe(this, this::renderStock);
         viewModel.getHistoryState().observe(this, this::renderHistory);
 
@@ -222,6 +227,20 @@ public class StockDetailActivity extends AppCompatActivity {
         if (value >= 1_000_000)     return String.format(Locale.US, "%.2fM", value / 1_000_000);
         if (value >= 1_000)         return String.format(Locale.US, "%.2fK", value / 1_000);
         return String.format(Locale.US, "%,.0f", value);
+    }
+    @Override
+    public void onTradeCompleted(TradeResult result) {
+        viewModel.loadStock();
+    }
+
+    private void openTradeDialog(TradeDialog.Mode mode) {
+        StockDetailViewModel.StockState state = viewModel.getStockState().getValue();
+        if (state == null || state.stock == null || state.stock.price == null) {
+            Toast.makeText(this, "Price unavailable, try again in a moment", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        TradeDialog.newInstance(mode, state.stock.ticker, state.stock.price)
+                .show(getSupportFragmentManager(), "trade");
     }
 
 

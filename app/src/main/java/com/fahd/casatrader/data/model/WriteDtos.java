@@ -33,4 +33,44 @@ public class WriteDtos {
         @SerializedName("user_id") public String userId;
         @SerializedName("ticker")  public String ticker;
     }
+
+    /** POST /rest/v1/rpc/buy_stock */
+    public static class BuyRequest {
+        @SerializedName("p_ticker") public String ticker;
+        @SerializedName("p_shares") public Integer shares;
+        @SerializedName("p_price")  public Double price;
+        public BuyRequest(String ticker, Integer shares, Double price) {
+            this.ticker = ticker; this.shares = shares; this.price = price;
+        }
+    }
+
+    /** POST /rest/v1/rpc/sell_stock */
+    public static class SellRequest {
+        @SerializedName("p_ticker") public String ticker;
+        @SerializedName("p_shares") public Integer shares;
+        @SerializedName("p_price")  public Double price;
+        public SellRequest(String ticker, Integer shares, Double price) {
+            this.ticker = ticker; this.shares = shares; this.price = price;
+        }
+    }
+
+    /** Response from buy_stock and sell_stock RPCs. */
+    public static class TradeResult {
+        @SerializedName("transaction_id")     public Long transactionId;
+        @SerializedName("ticker")             public String ticker;
+        @SerializedName("type")               public String type;
+        @SerializedName("shares")             public Integer shares;
+        @SerializedName("price")              public Double price;
+        @SerializedName("gross")              public Double gross;
+        @SerializedName("fee")                public Double fee;
+        // Set on BUY only:
+        @SerializedName("total_cost")         public Double totalCost;
+        @SerializedName("new_cash_balance")   public Double newCashBalance;
+        @SerializedName("new_holding_shares") public Integer newHoldingShares;
+        @SerializedName("new_avg_buy_price")  public Double newAvgBuyPrice;
+        // Set on SELL only:
+        @SerializedName("net_proceeds")       public Double netProceeds;
+        @SerializedName("remaining_shares")   public Integer remainingShares;
+        @SerializedName("realized_pl")        public Double realizedPl;
+    }
 }

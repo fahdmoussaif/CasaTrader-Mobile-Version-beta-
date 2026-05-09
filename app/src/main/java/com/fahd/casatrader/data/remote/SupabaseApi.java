@@ -6,9 +6,15 @@ import com.fahd.casatrader.data.model.Stock;
 
 import java.util.List;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
+import com.fahd.casatrader.data.model.Holding;
+import com.fahd.casatrader.data.model.WriteDtos.BuyRequest;
+import com.fahd.casatrader.data.model.WriteDtos.SellRequest;
+import com.fahd.casatrader.data.model.WriteDtos.TradeResult;
 
 public interface SupabaseApi {
 
@@ -34,4 +40,15 @@ public interface SupabaseApi {
                                               @Query("select") String select,
                                               @Query("order") String order,
                                               @Query("limit") Integer limit);
+    @POST("rest/v1/rpc/buy_stock")
+    Call<TradeResult> buyStock(@Body BuyRequest body);
+
+    @POST("rest/v1/rpc/sell_stock")
+    Call<TradeResult> sellStock(@Body SellRequest body);
+
+    /** Holding for current user + given ticker. Returns 0 or 1 row. */
+    @GET("rest/v1/holdings")
+    Call<List<Holding>> getMyHolding(@Query("ticker") String tickerEq,
+                                     @Query("select") String select);
+
 }

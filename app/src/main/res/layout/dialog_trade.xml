@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/headerTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textStyle="bold"
+        tools:text="Buy ATW"
+        xmlns:tools="http://schemas.android.com/tools"/>
+
+    <TextView
+        android:id="@+id/subheaderTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?android:textColorSecondary"
+        android:layout_marginTop="4dp"
+        tools:text="Current price 540.50 MAD"/>
+
+    <TextView
+        android:id="@+id/availableTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?android:textColorSecondary"
+        tools:text="Available: 100,000.00 MAD"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Number of shares"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/sharesEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/colorSurfaceContainerLow">
+
+        <LinearLayout style="@style/TradeBreakdownRow">
+            <TextView style="@style/TradeBreakdownLabel" android:text="Subtotal"/>
+            <TextView android:id="@+id/grossTv" style="@style/TradeBreakdownValue"
+                tools:text="0.00 MAD"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/TradeBreakdownRow">
+            <TextView style="@style/TradeBreakdownLabel" android:text="Fee (1%)"/>
+            <TextView android:id="@+id/feeTv" style="@style/TradeBreakdownValue"
+                tools:text="0.00 MAD"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?attr/colorOutlineVariant"/>
+
+        <LinearLayout style="@style/TradeBreakdownRow">
+            <TextView style="@style/TradeBreakdownLabel"
+                android:id="@+id/totalLabelTv"
+                tools:text="Total cost"/>
+            <TextView android:id="@+id/totalTv"
+                android:textStyle="bold"
+                style="@style/TradeBreakdownValue"
+                tools:text="0.00 MAD"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/dialogErrorTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/loss_red"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Not enough cash for this purchase."/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirmBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="20dp"
+        android:enabled="false"
+        app:cornerRadius="14dp"
+        tools:text="Confirm purchase"/>
+
+    <ProgressBar
+        android:id="@+id/dialogLoadingPb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:visibility="gone"/>
+
+</LinearLayout>
