@@ -6,9 +6,9 @@ CasaTrader is a modern Android application for trading and managing a portfolio 
 
 <table>
   <tr>
-    <td align="center"><img src="screenshots/login.png" width="220" alt="Login screen"/></td>
-    <td align="center"><img src="screenshots/signup.png" width="220" alt="Sign up screen"/></td>
-    <td align="center"><img src="screenshots/stocks.png" width="220" alt="Stock list"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012330.png" width="220" alt="Login screen"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012415.png" width="220" alt="Sign up screen"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012541.png" width="220" alt="Stock list"/></td>
   </tr>
   <tr>
     <td align="center"><b>Login</b></td>
@@ -16,9 +16,9 @@ CasaTrader is a modern Android application for trading and managing a portfolio 
     <td align="center"><b>Stock List</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/detail.png" width="220" alt="Stock detail with chart"/></td>
-    <td align="center"><img src="screenshots/buy.png" width="220" alt="Buy dialog"/></td>
-    <td align="center"><img src="screenshots/watchlist.png" width="220" alt="Watchlist"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012614.png" width="220" alt="Stock detail with chart"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012729.png" width="220" alt="Buy dialog"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012746.png" width="220" alt="Watchlist"/></td>
   </tr>
   <tr>
     <td align="center"><b>Stock Detail</b></td>
@@ -26,8 +26,8 @@ CasaTrader is a modern Android application for trading and managing a portfolio 
     <td align="center"><b>Watchlist</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/portfolio.png" width="220" alt="Portfolio"/></td>
-    <td align="center"><img src="screenshots/history.png" width="220" alt="Transaction history"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012757.png" width="220" alt="Portfolio"/></td>
+    <td align="center"><img src="screenshots/Screenshot_20260510_012822.png" width="220" alt="Transaction history"/></td>
     <td></td>
   </tr>
   <tr>
