@@ -1,38 +1,90 @@
 # CasaTrader
 
-CasaTrader is a modern, professional Android application for stock trading and portfolio management. It features a sleek Material 3 design, real-time-simulated trading, and a secure authentication system integrated with Supabase.
+CasaTrader is a modern Android application for trading and managing a portfolio of stocks listed on the **Casablanca Stock Exchange (BVC)**. It pairs a polished Material 3 dark interface with a Supabase backend that handles authentication, market data, and atomic trade execution.
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/login.png" width="220" alt="Login screen"/></td>
+    <td align="center"><img src="screenshots/signup.png" width="220" alt="Sign up screen"/></td>
+    <td align="center"><img src="screenshots/stocks.png" width="220" alt="Stock list"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Login</b></td>
+    <td align="center"><b>Sign Up</b></td>
+    <td align="center"><b>Stock List</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/detail.png" width="220" alt="Stock detail with chart"/></td>
+    <td align="center"><img src="screenshots/buy.png" width="220" alt="Buy dialog"/></td>
+    <td align="center"><img src="screenshots/watchlist.png" width="220" alt="Watchlist"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Stock Detail</b></td>
+    <td align="center"><b>Buy Dialog</b></td>
+    <td align="center"><b>Watchlist</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/portfolio.png" width="220" alt="Portfolio"/></td>
+    <td align="center"><img src="screenshots/history.png" width="220" alt="Transaction history"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Portfolio</b></td>
+    <td align="center"><b>Transaction History</b></td>
+    <td></td>
+  </tr>
+</table>
 
 ## 🚀 Key Features
 
-*   **Real-time Stock Tracking**: View live prices, percentage changes, and detailed market data for various stocks.
-*   **Portfolio Management**: Track your holdings, total value, and unrealized profit/loss in a personalized dashboard.
-*   **Simulated Trading**: Execute BUY and SELL orders with a simulated cash balance and a 1% transaction fee.
-*   **Watchlist**: Keep an eye on your favorite stocks with an easy-to-manage watchlist.
-*   **Transaction History**: Review every trade you've made with a detailed history log.
-*   **Secure Authentication**: Full login and signup flow with secure JWT management.
-*   **Professional UI**: Built with a custom Material 3 Dark Theme (Charcoal/Indigo palette) for a premium finance app feel.
-*   **Username Integration**: Personalized greetings and profile headers.
+*   **Live BVC Stock Data**: Browse all 113 listed stocks with current prices, daily change, and full quote details (open/high/low/volume/market cap).
+*   **Interactive Price Chart**: Year-long historical price chart on every stock detail screen, powered by MPAndroidChart.
+*   **Simulated Trading with Realistic Fees**: Execute BUY and SELL orders against a 100,000 MAD starting balance with a 1% commission per side, mirroring real Moroccan brokerage costs.
+*   **Atomic Server-Side Execution**: Trades are processed by a Postgres RPC function that validates funds, updates holdings, debits cash, and logs the transaction in a single transaction — no client-side race conditions.
+*   **Portfolio Dashboard**: Total portfolio value, cash vs. holdings split, and per-position unrealized P/L.
+*   **Watchlist**: Save stocks of interest with one-tap toggle from the detail screen.
+*   **Transaction History**: Chronological log of every trade with cash impact and timezone-aware timestamps.
+*   **Secure Authentication**: Full email/password signup and login flow via Supabase Auth, with JWTs stored in `EncryptedSharedPreferences` and silent token refresh on expiry.
+*   **Material 3 Design**: Custom dark theme with charcoal surfaces and indigo accents, designed for an evening-trading-session feel.
 
 ## 🛠️ Tech Stack
 
 *   **Language**: Java
-*   **Architecture**: MVVM with LiveData
-*   **Backend**: Supabase (PostgreSQL, Auth, PostgREST)
-*   **Networking**: Retrofit & OkHttp
-*   **UI Components**: Material 3, View Binding, Navigation Component
-*   **Data Security**: EncryptedSharedPreferences for session storage
+*   **Architecture**: MVVM with `LiveData`
+*   **Backend**: Supabase (PostgreSQL · PostgREST · GoTrue Auth)
+*   **Networking**: Retrofit, OkHttp, Gson
+*   **UI**: Material 3, View Binding, AndroidX Navigation Component (single-activity + fragments + bottom nav)
 *   **Charts**: MPAndroidChart
+*   **Security**: `EncryptedSharedPreferences` for session storage; dual-mode auth interceptor (anon key when logged out, JWT when logged in) with automatic refresh on 401
 
-## 📦 Download APK
+## 🏛️ Architecture Highlights
 
-You can download the latest debug APK for testing from the GitHub Releases section. 
+*   **Single-source-of-truth trading**: `buy_stock` and `sell_stock` Postgres functions execute the entire trade — fund check, holdings upsert with weighted-average cost basis, cash debit, transaction log — atomically. The client only displays results.
+*   **Row-Level Security**: Every user-scoped table (`profiles`, `holdings`, `transactions`, `watchlist`) is protected by RLS policies that filter by `auth.uid()`. The app never sends a `user_id` filter; the database enforces it.
+*   **Resilient JWT lifecycle**: An OkHttp interceptor catches 401 responses on `/rest/v1/`, refreshes the token via the bare auth client, and transparently retries the original request. Concurrent 401s share a single refresh via a synchronized lock to prevent refresh-token churn.
+*   **Offline-tolerant search**: The stock list fetches all 113 stocks once and filters client-side as the user types — zero network latency per keystroke.
+
+## 📦 Backend
+
+The Supabase backend is a separate repository: [Casatrader_backend](https://github.com/fahdmoussaif/Casatrader_backend). It includes the daily scraper (GitHub Actions cron) that ingests BVC market data into the `stocks` and `price_snapshots` tables. SQL migrations for the schema, RLS policies, and `buy_stock`/`sell_stock` RPCs are versioned there.
 
 ## 🏗️ Building from Source
 
 1.  Clone the repository.
-2.  Open the project in **Android Studio**.
-3.  Ensure you have a `local.properties` file with your SDK path.
-4.  Build the project using `./gradlew assembleDebug`.
+2.  Open the project in **Android Studio** (Hedgehog or newer).
+3.  Create a `local.properties` file in the project root with your Supabase credentials:
+```properties
+    sdk.dir=/path/to/Android/Sdk
+    SUPABASE_URL=https://your-project-ref.supabase.co
+    SUPABASE_ANON_KEY=your-anon-key
+```
+4.  Sync Gradle, then build with `./gradlew assembleDebug` or run on an emulator (API 24+).
+
+## 📦 Download APK
+
+The latest debug APK is available in the [GitHub Releases](https://github.com/fahdmoussaif/casatrader/releases) section.
 
 ## 📜 License
 
