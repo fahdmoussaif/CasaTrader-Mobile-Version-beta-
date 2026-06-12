@@ -2,7 +2,6 @@
 
 CasaTrader is a modern Android application for trading and managing a portfolio of stocks listed on the **Casablanca Stock Exchange (BVC)**. It pairs a polished Material 3 dark interface with a Supabase backend that handles authentication, market data, and atomic trade execution.
 
-
 ## 🚀 Key Features
 
 *   **Live BVC Stock Data**: Browse all 113 listed stocks with current prices, daily change, and full quote details (open/high/low/volume/market cap).
