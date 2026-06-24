@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; background: transparent; overflow: hidden; }
+        #chart { width: 100%; height: 100%; }
+    </style>
+    <script src="lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+    <div id="chart"></div>
+    <script>
+        var chart = null;
+        var series = null;
+
+        function hexToRgba(hex, alpha) {
+            var h = hex.replace('#', '');
+            if (h.length === 3) { h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2]; }
+            var r = parseInt(h.substring(0, 2), 16);
+            var g = parseInt(h.substring(2, 4), 16);
+            var b = parseInt(h.substring(4, 6), 16);
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+
+        // Called from Android. jsonData = [{time:"YYYY-MM-DD", open, high, low, close}, ...]
+        function loadChart(jsonData, upColor, downColor, textColor) {
+            var data;
+            try { data = JSON.parse(jsonData); } catch (e) { return; }
+
+            var grid = hexToRgba(textColor, 0.10);
+            var crosshair = hexToRgba(textColor, 0.50);
+
+            if (!chart) {
+                chart = LightweightCharts.createChart(document.getElementById('chart'), {
+                    layout: { background: { color: 'transparent' }, textColor: textColor, attributionLogo: false },
+                    grid: { vertLines: { color: grid }, horzLines: { color: grid } },
+                    rightPriceScale: { borderColor: grid },
+                    timeScale: { borderColor: grid, rightOffset: 4, timeVisible: false },
+                    crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                        vertLine: { color: crosshair, width: 1, style: 3, labelBackgroundColor: upColor },
+                        horzLine: { color: crosshair, width: 1, style: 3, labelBackgroundColor: upColor }
+                    },
+                    handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
+                    handleScale: { mouseWheel: true, pinch: true, axisPressedMouseMove: true }
+                });
+                series = chart.addCandlestickSeries();
+            }
+
+            chart.applyOptions({
+                layout: { textColor: textColor },
+                grid: { vertLines: { color: grid }, horzLines: { color: grid } },
+                rightPriceScale: { borderColor: grid },
+                timeScale: { borderColor: grid }
+            });
+            series.applyOptions({
+                upColor: upColor, downColor: downColor,
+                borderUpColor: upColor, borderDownColor: downColor,
+                wickUpColor: upColor, wickDownColor: downColor
+            });
+
+            series.setData(data);
+
+            // Default to a readable window of recent candles; older bars stay scrollable.
+            var bars = 90;
+            if (data.length > bars) {
+                chart.timeScale().setVisibleLogicalRange({ from: data.length - bars, to: data.length - 1 });
+            } else {
+                chart.timeScale().fitContent();
+            }
+        }
+
+        function resize() {
+            if (chart) { chart.applyOptions({ width: window.innerWidth, height: window.innerHeight }); }
+        }
+        window.addEventListener('resize', resize);
+    </script>
+</body>
+</html>
