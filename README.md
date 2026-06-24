@@ -2,41 +2,6 @@
 
 CasaTrader is a modern Android application for trading and managing a portfolio of stocks listed on the **Casablanca Stock Exchange (BVC)**. It pairs a polished Material 3 dark interface with a Supabase backend that handles authentication, market data, and atomic trade execution.
 
-## 📸 Screenshots
-
-<table>
-  <tr>
-    <td align="center"><img src="screenshots/login.png" width="220" alt="Login screen"/></td>
-    <td align="center"><img src="screenshots/signup.png" width="220" alt="Sign up screen"/></td>
-    <td align="center"><img src="screenshots/stocks.png" width="220" alt="Stock list"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Login</b></td>
-    <td align="center"><b>Sign Up</b></td>
-    <td align="center"><b>Stock List</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="screenshots/detail.png" width="220" alt="Stock detail with chart"/></td>
-    <td align="center"><img src="screenshots/buy.png" width="220" alt="Buy dialog"/></td>
-    <td align="center"><img src="screenshots/watchlist.png" width="220" alt="Watchlist"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Stock Detail</b></td>
-    <td align="center"><b>Buy Dialog</b></td>
-    <td align="center"><b>Watchlist</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="screenshots/portfolio.png" width="220" alt="Portfolio"/></td>
-    <td align="center"><img src="screenshots/history.png" width="220" alt="Transaction history"/></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Portfolio</b></td>
-    <td align="center"><b>Transaction History</b></td>
-    <td></td>
-  </tr>
-</table>
-
 ## 🚀 Key Features
 
 *   **Live BVC Stock Data**: Browse all 113 listed stocks with current prices, daily change, and full quote details (open/high/low/volume/market cap).
