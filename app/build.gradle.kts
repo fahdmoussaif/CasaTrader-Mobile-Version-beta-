@@ -77,9 +77,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment:2.8.5")
     implementation("androidx.navigation:navigation-ui:2.8.5")
 
-    // Charting
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
     // EncryptedSharedPreferences (for JWTs)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 

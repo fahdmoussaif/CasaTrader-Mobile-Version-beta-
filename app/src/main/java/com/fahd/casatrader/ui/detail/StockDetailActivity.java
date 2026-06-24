@@ -1,9 +1,16 @@
 package com.fahd.casatrader.ui.detail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,11 +25,7 @@ import com.fahd.casatrader.data.remote.ApiClient;
 import com.fahd.casatrader.data.repo.WatchlistRepository;
 import com.fahd.casatrader.databinding.ActivityStockDetailBinding;
 import com.fahd.casatrader.util.TokenStore;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +42,9 @@ public class StockDetailActivity extends AppCompatActivity implements TradeDialo
     private WatchlistRepository watchlistRepo;
     private String ticker;
     private Stock currentStock;
+
+    private boolean chartReady = false;
+    private List<PriceSnapshot> pendingHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,11 +120,11 @@ public class StockDetailActivity extends AppCompatActivity implements TradeDialo
         binding.chartLoadingPb.setVisibility(state.loadState == StockDetailViewModel.LoadState.LOADING ? View.VISIBLE : View.GONE);
         if (state.loadState == StockDetailViewModel.LoadState.SUCCESS && state.history != null && !state.history.isEmpty()) {
             binding.chartEmptyState.setVisibility(View.GONE);
-            binding.priceChart.setVisibility(View.VISIBLE);
+            binding.chartWebView.setVisibility(View.VISIBLE);
             updateChartData(state.history);
         } else if (state.loadState == StockDetailViewModel.LoadState.SUCCESS || state.loadState == StockDetailViewModel.LoadState.ERROR) {
             binding.chartEmptyState.setVisibility(View.VISIBLE);
-            binding.priceChart.setVisibility(View.GONE);
+            binding.chartWebView.setVisibility(View.GONE);
         }
     }
 
@@ -153,37 +159,94 @@ public class StockDetailActivity extends AppCompatActivity implements TradeDialo
         binding.watchlistBtn.setIconResource(watched ? R.drawable.ic_star_filled : R.drawable.ic_star_outline);
     }
 
+    @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     private void setupChart() {
-        binding.priceChart.getDescription().setEnabled(false);
-        binding.priceChart.getLegend().setEnabled(false);
-        binding.priceChart.setTouchEnabled(true);
-        binding.priceChart.setDragEnabled(true);
-        binding.priceChart.setScaleEnabled(true);
-        binding.priceChart.setPinchZoom(true);
-        binding.priceChart.setDrawGridBackground(false);
-        binding.priceChart.getXAxis().setEnabled(false);
-        binding.priceChart.getAxisRight().setEnabled(false);
-        binding.priceChart.getAxisLeft().setDrawGridLines(false);
-        binding.priceChart.getAxisLeft().setDrawAxisLine(false);
-        binding.priceChart.getAxisLeft().setTextColor(ContextCompat.getColor(this, R.color.neutral_gray));
+        WebView wv = binding.chartWebView;
+        wv.getSettings().setJavaScriptEnabled(true);
+        wv.setBackgroundColor(Color.TRANSPARENT);
+        // Horizontal drag / pinch -> chart pan & zoom; vertical drag -> let the page scroll.
+        final int touchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
+        wv.setOnTouchListener(new View.OnTouchListener() {
+            float downX, downY;
+            boolean decided, claim;
+            @Override public boolean onTouch(View v, MotionEvent e) {
+                switch (e.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downX = e.getX(); downY = e.getY();
+                        decided = false; claim = false;
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+                    case MotionEvent.ACTION_POINTER_DOWN: // second finger -> pinch zoom
+                        decided = true; claim = true;
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (!decided && e.getPointerCount() == 1) {
+                            float dx = Math.abs(e.getX() - downX);
+                            float dy = Math.abs(e.getY() - downY);
+                            if (dx > touchSlop || dy > touchSlop) {
+                                claim = dx >= dy; // horizontal pan stays with the chart
+                                decided = true;
+                            }
+                        }
+                        v.getParent().requestDisallowInterceptTouchEvent(claim || e.getPointerCount() > 1);
+                        break;
+                }
+                return false;
+            }
+        });
+        wv.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view, String url) {
+                chartReady = true;
+                if (pendingHistory != null) {
+                    injectChartData(pendingHistory);
+                    pendingHistory = null;
+                }
+            }
+        });
+        wv.loadUrl("file:///android_asset/chart.html");
     }
 
     private void updateChartData(List<PriceSnapshot> history) {
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < history.size(); i++) {
-            entries.add(new Entry(i, history.get(i).price.floatValue()));
+        if (chartReady) {
+            injectChartData(history);
+        } else {
+            pendingHistory = history;
         }
-        LineDataSet set = new LineDataSet(entries, "Price");
-        set.setColor(ContextCompat.getColor(this, R.color.md_theme_primary));
-        set.setLineWidth(2f);
-        set.setDrawCircles(false);
-        set.setDrawValues(false);
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set.setDrawFilled(true);
-        set.setFillColor(ContextCompat.getColor(this, R.color.md_theme_primary));
-        set.setFillAlpha(30);
-        binding.priceChart.setData(new LineData(set));
-        binding.priceChart.invalidate();
+    }
+
+    private void injectChartData(List<PriceSnapshot> history) {
+        StringBuilder json = new StringBuilder("[");
+        String lastDate = null;
+        boolean first = true;
+        for (PriceSnapshot s : history) {
+            if (s.tradeDate == null || s.price == null) continue;
+            // Lightweight Charts requires strictly ascending, unique time values.
+            if (s.tradeDate.equals(lastDate)) continue;
+            double close = s.price;
+            double open = s.open != null ? s.open : close;
+            double high = s.high != null ? s.high : Math.max(open, close);
+            double low = s.low != null ? s.low : Math.min(open, close);
+            if (!first) json.append(',');
+            json.append("{\"time\":\"").append(s.tradeDate)
+                    .append("\",\"open\":").append(open)
+                    .append(",\"high\":").append(high)
+                    .append(",\"low\":").append(low)
+                    .append(",\"close\":").append(close).append('}');
+            lastDate = s.tradeDate;
+            first = false;
+        }
+        json.append(']');
+
+        String upColor = hex(R.color.gain_green);
+        String downColor = hex(R.color.loss_red);
+        String textColor = hex(R.color.neutral_gray);
+        String js = "loadChart('" + json + "','" + upColor + "','" + downColor + "','" + textColor + "')";
+        binding.chartWebView.evaluateJavascript(js, null);
+    }
+
+    private String hex(int colorRes) {
+        return String.format("#%06X", 0xFFFFFF & ContextCompat.getColor(this, colorRes));
     }
 
     private String fmt(Double v) {

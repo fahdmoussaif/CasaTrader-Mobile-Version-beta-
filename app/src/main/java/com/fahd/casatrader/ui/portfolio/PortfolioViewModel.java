@@ -36,6 +36,7 @@ public class PortfolioViewModel extends ViewModel {
     private List<HoldingWithStock> latestHoldings;
     private boolean profileLoaded = false;
     private boolean holdingsLoaded = false;
+    private boolean loading = false;
     private String pendingError;
 
     public PortfolioViewModel(PortfolioRepository repo) { this.repo = repo; }
@@ -43,6 +44,8 @@ public class PortfolioViewModel extends ViewModel {
     public LiveData<UiState> getUiState() { return uiState; }
 
     public void load() {
+        if (loading) return; // a fetch is already in flight; don't restart it
+        loading = true;
         uiState.setValue(UiState.loading());
         profileLoaded = false;
         holdingsLoaded = false;
@@ -72,6 +75,7 @@ public class PortfolioViewModel extends ViewModel {
 
     private void tryEmit() {
         if (!profileLoaded || !holdingsLoaded) return;
+        loading = false;
         if (pendingError != null && latestProfile == null) {
             uiState.postValue(UiState.error(pendingError));
         } else {

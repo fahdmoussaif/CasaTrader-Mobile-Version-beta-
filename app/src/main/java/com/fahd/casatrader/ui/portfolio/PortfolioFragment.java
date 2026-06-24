@@ -108,10 +108,10 @@ public class PortfolioFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (viewModel.getUiState().getValue() != null
-                && viewModel.getUiState().getValue().loadState != PortfolioViewModel.LoadState.LOADING) {
-            viewModel.load();
-        }
+        // Refresh holdings & current prices every time the screen becomes visible.
+        // load() is idempotent — it no-ops if a fetch is already in flight — so this is
+        // safe alongside the initial load in onViewCreated and won't double-fetch.
+        viewModel.load();
     }
 
     private void renderSummary(com.fahd.casatrader.data.model.Profile profile,

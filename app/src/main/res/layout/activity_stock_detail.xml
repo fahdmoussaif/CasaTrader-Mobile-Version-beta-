@@ -72,11 +72,10 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="240dp">
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/priceChart"
+                    <WebView
+                        android:id="@+id/chartWebView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="12dp"/>
+                        android:layout_height="match_parent"/>
                     <ProgressBar
                         android:id="@+id/chartLoadingPb"
                         android:layout_width="wrap_content"

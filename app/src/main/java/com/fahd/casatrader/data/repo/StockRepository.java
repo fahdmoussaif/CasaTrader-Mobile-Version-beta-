@@ -71,7 +71,7 @@ public class StockRepository {
     }
 
     public void getPriceHistory(String ticker, int days, @NonNull Callback<List<PriceSnapshot>> cb) {
-        api.getPriceHistory("eq." + ticker, "trade_date,price",
+        api.getPriceHistory("eq." + ticker, "trade_date,open,high,low,price",
                         "trade_date.asc", days)
                 .enqueue(new retrofit2.Callback<List<PriceSnapshot>>() {
                     @Override
